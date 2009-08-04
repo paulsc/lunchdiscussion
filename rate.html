@@ -1,0 +1,73 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+		<script type="text/javascript" src="static/main.js"></script>
+
+		<script type="text/javascript">
+		
+			function $RF(el, radioGroup) {
+				if($(el).type && $(el).type.toLowerCase() == 'radio') {
+					var radioGroup = $(el).name;
+					var el = $(el).form;
+				} else if ($(el).tagName.toLowerCase() != 'form') {
+					return false;
+				}
+			
+				var checked = $(el).getInputs('radio', radioGroup).find(
+					function(re) {return re.checked;}
+				);
+				return (checked) ? $F(checked) : null;
+			}		
+			
+			function verify() {
+				suggestion = $RF('form', 'suggestion');
+				rating = $RF('form', 'rating');
+
+				if (suggestion == null) {
+					alert('Please specify a restaurant');
+					return false;
+				}
+				
+				return true;
+			}
+		
+			function submitClick() {
+				if (!verify()) return;
+				document.forms.form.submit();
+			}
+			
+			function cancelClick() {
+				document.forms.form.cancel.value = "true";
+				document.forms.form.submit();
+			}
+		
+		</script>
+
+		<center>
+		<h3>where did you eat {{ day }}?</h3>
+		
+		<form id="form" action="/rate" method="get" onSubmit="return verify()">
+		<table><tr><td>
+		{% for sug in suggestions %}
+			<input type="radio" name="suggestion" value="{{ sug.key }}" /> {{ sug.restaurant.name }}
+			<br />
+		{% endfor %}
+		</table>
+
+		<h3>how was it?</h3>
+
+		<input type="radio" name="rating" value="-2" /> very bad
+		<input type="radio" name="rating" value="-1" /> bad
+		<input type="radio" name="rating" value="0" checked /> okay
+		<input type="radio" name="rating" value="1" /> good
+		<input type="radio" name="rating" value="2" /> FTW!!
+		<br/><br/>
+		<input type="hidden" name="cancel" value="false" />
+		<input type="button" value="didn't eat" onclick="cancelClick()"/>
+		<input type="button" value="submit" onclick="submitClick()"/>
+		</form>
+
+		</center>
+
+{% endblock %}

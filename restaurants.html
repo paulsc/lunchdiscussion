@@ -1,0 +1,3 @@
+		{% for restaurant in restaurants %}
+		<div><a href="javascript:newSuggestion('{{ restaurant.key }}')">{{ restaurant.name }}</a></div>
+		{% endfor %}

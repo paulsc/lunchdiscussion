@@ -1,0 +1,36 @@
+	{% for sug in suggestions %}
+		<div class="suggestion">
+	
+			<b>{{ sug.restaurant.name }}</b> <small>by {{ sug.author.nickname }}
+		
+			<a id="comment_button{{ forloop.counter }}" href="#"
+				onclick="$('comment_box{{ forloop.counter }}').show(); return false;">comment</a>
+			{% ifequal sug.author.user user %}
+				<a href="#" onclick="removeSuggestion('{{ sug.key }}')">remove</a>
+			{% endifequal %}
+
+			</small>
+		
+			{% for comment in sug.ordered_comments %}
+			<div class="comment">
+				<table><tr>
+						{% if comment.author.avatar %}
+							<td><img src="/avatar?user={{ comment.author.key }}" width="32"></td>
+						{% else %}
+							<td><img src="/static/avatar.jpg" width="32"></td>					
+						{% endif %}
+						<td><small>{{ comment.author.nickname }}:</small></td>
+						<td>{{ comment.text }}</td>
+				</tr></table>
+			</div>
+			{% endfor %}
+		
+			<div class="comment_box" style="display: none"
+				id="comment_box{{ forloop.counter }}">
+				<textarea cols="60" rows="6" id="comment_text{{ forloop.counter }}"></textarea>
+				<br/>
+				<input type="button" value="add comment" 
+				onclick="newComment('{{ sug.key }}', $F('comment_text{{ forloop.counter}}'))" />
+			</div>
+		</div>
+	{% endfor %}

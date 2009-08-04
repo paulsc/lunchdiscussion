@@ -1,0 +1,60 @@
+body {
+	font-family: Arial, Helvetica, sans-serif;;
+}
+
+.suggestion {
+	margin: 5px;
+	min-width: 400px;
+	padding: 5px;
+	border: 1px solid #dddddd;
+}
+
+.comment {
+	padding-left: 40px;
+}
+
+.comment_box {
+	padding-left: 40px;
+}
+
+img {  
+	border-style: none;
+}
+
+a {
+	color: blue;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:visited {
+	color: blue;
+}
+
+.login { 
+	float: right;
+	color: gray;
+}
+
+.clear {
+	clear: both;
+}
+
+#leftcolumn {
+	float: left;
+}
+
+#rightcolumn {
+	float: right;
+}
+
+#discussrs {
+	padding-top: 10px;
+}
+
+#logo {
+	float: left;
+}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block onload %}{% if ask_to_rate %}showRatingPopup(){% endif %}{% endblock %}
+
+{% block content %}
+
+		<script type="text/javascript" src="static/main.js"></script>
+
+		<div class="login">
+			<small><a href="/profile">{{ user.nickname }}</a> | 
+			<a href="{{ logout_url }}">logout</a>	
+			</small></div>
+
+		<div id="logo">
+			<img src="static/logo.png" alt="logo" width="280" height="62" />
+		</div>
+
+		<div id="discussrs">
+			<table style="text-align: center"><tr>
+					{% for member in active_crew %}
+					<td>
+						{% ifnotequal member.user user.user %}
+							<a href="javascript:showProfilePopup('{{ member.key }}')">
+						{% else %}
+							<a href="/profile">
+						{% endifnotequal %}
+						{% if member.avatar %}
+							<img src="/avatar?user={{ member.key }}" alt="avatar" height="32"/>{% else %}
+							<img src="/static/avatar.jpg" alt="avatar" height="32"/>{% endif %}</a>
+						<br/>
+						<small>{{ member.nickname }}</small>
+						</td>
+					{% endfor %}
+					{% for member in dead_crew %}
+					<td style="opacity: 0.3">
+						{% ifnotequal member.user user.user %}
+							<a href="javascript:showProfilePopup('{{ member.key }}')">
+						{% else %}
+							<a href="/profile">
+						{% endifnotequal %}
+						{% if member.avatar %}
+							<img src="/avatar?user={{ member.key }}" alt="avatar" height="32"/>{% else %}
+							<img src="/static/avatar.jpg" alt="avatar" height="32"/>{% endif %}</a>
+						<br/>
+						<small>{{ member.nickname }}</small>
+						</td>
+					{% endfor %}					
+			</tr></table>	
+		</div>
+		
+		<div class="clear"/>
+			
+		<br/><br/>
+		<table><tr><td width="100%" valign="top">
+
+		<h2>it's {{ now }}, discuss!</h2>
+		<div id="suggestions"></div>
+
+		</td><td valign="top">
+		
+		<h2>options</h2>
+		<div id="restaurants"></div>
+		<br/>
+		<input type="text" id="restaurant_name" />
+		<input type="button" value="add" onclick="javascript:addRestaurant()" />
+
+		</td></tr></table>
+		
+		<div class="clear" />
+
+{% endblock %}
