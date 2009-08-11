@@ -8,12 +8,10 @@ DEAD_LIMIT = 7
 class Restaurant(db.Model):
 	name = db.StringProperty()
 	karma = db.IntegerProperty()
-	
-	def add_karma(self, karma):
-		if self.karma == None:
-			self.karma = karma
-		else:
-			self.karma += karma
+	lunchcount = db.IntegerProperty()
+	def add_vote(self, karma):
+		self.karma = self.karma + karma if self.karma else karma
+		self.lunchcount = self.lunchcount + 1 if self.lunchcount else 1
 
 class UserInfo(db.Model):
 	user = db.UserProperty(auto_current_user_add=True)
@@ -23,14 +21,12 @@ class UserInfo(db.Model):
 	karma = db.IntegerProperty()
 	lastvoted = db.DateProperty()
 	lastposted = db.DateProperty()
-
+	lunchcount = db.IntegerProperty()
 	def voted_for_day(self, day):
 		return self.lastvoted == day
-	def add_karma(self, karma):
-		if self.karma == None:
-			self.karma = karma
-		else:
-			self.karma += karma		
+	def add_vote(self, karma):
+		self.karma = self.karma + karma if self.karma else karma
+		self.lunchcount = self.lunchcount + 1 if self.lunchcount else 1
 	
 	@staticmethod
 	def get_active_crew():

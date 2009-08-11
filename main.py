@@ -146,11 +146,11 @@ class RatingHandler(webapp.RequestHandler):
 			self.error(500)
 			return
 			
-		restaurant.add_karma(rating)
+		restaurant.add_vote(rating)
 		restaurant.put()
 										
 		author = suggestion.author
-		author.add_karma(rating)
+		author.add_vote(rating)
 		author.put()
 				
 		userinfo = user_info()
