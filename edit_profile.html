@@ -18,6 +18,9 @@
 			{% endif %}
 	
 			<form action="/profile" enctype="multipart/form-data" method="post">
+				{% if not userinfo %}
+					<input type="hidden" name="first_login" value="true" />
+				{% endif %}
 				<table>
 					<tr>
 						<td align="right">nickname:

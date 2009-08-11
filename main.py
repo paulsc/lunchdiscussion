@@ -151,14 +151,18 @@ class ProfileHandler(webapp.RequestHandler):
 		userinfo.nickname = cgi.escape(self.request.get('nickname'))
 		email = cgi.escape(self.request.get('email'))
 		avatar = self.request.get('avatar')
+		first_login = self.request.get('first_login')
 		if avatar != '':
 			avatar = images.resize(avatar, 128)
 			userinfo.avatar = db.Blob(avatar)
 		if email == '':
 			email = 'none'
 		userinfo.email = email
-		userinfo.lastposted = date.today()
-		userinfo.lastvoted = date.today()
+
+		if first_login != '':
+			userinfo.lastposted = date.today()
+			userinfo.lastvoted = date.today()
+			
 		userinfo.put()
 		self.redirect('/')
 
