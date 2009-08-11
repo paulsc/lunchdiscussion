@@ -1,6 +1,9 @@
 from google.appengine.ext import db
 from datetime import date
 from datetime import timedelta
+from datetime import datetime
+
+DEAD_LIMIT = 7
 
 class Restaurant(db.Model):
 	name = db.StringProperty()
@@ -23,12 +26,22 @@ class UserInfo(db.Model):
 
 	def voted_for_day(self, day):
 		return self.lastvoted == day
-
 	def add_karma(self, karma):
 		if self.karma == None:
 			self.karma = karma
 		else:
 			self.karma += karma		
+	
+	@staticmethod
+	def get_active_crew():
+		one_week_ago = datetime.now() - timedelta(DEAD_LIMIT)
+		return UserInfo.gql('WHERE lastposted >= DATE(:1, :2, :3)', 
+					one_week_ago.year, one_week_ago.month, one_week_ago.day)
+	@staticmethod
+	def get_dead_crew():
+		one_week_ago = datetime.now() - timedelta(DEAD_LIMIT)
+		return UserInfo.gql('WHERE lastposted < DATE(:1, :2, :3)', 
+						one_week_ago.year, one_week_ago.month, one_week_ago.day)			
 
 class Suggestion(db.Model):
 	author = db.ReferenceProperty(UserInfo)

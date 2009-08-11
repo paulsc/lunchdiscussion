@@ -7,33 +7,14 @@ import wsgiref.handlers
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
-from google.appengine.api import mail
 from google.appengine.api import images
 from datetime import datetime
 from datetime import timedelta
 from datetime import date
-
-from models import *
-
 from tzinfo import Eastern
 
-DEAD_LIMIT = 7
-
-def user_info():
-	return UserInfo.gql("WHERE user = :1", users.get_current_user()).get()
-
-def is_morning():
-	now = datetime.now(Eastern)
-	return now.hour < 14
-
-def ask_to_rate():
-	today = date.today()
-	yesterday = today - timedelta(1)
-	userinfo = user_info()
-	if is_morning():
-		return not userinfo.voted_for_day(yesterday) and get_suggestions(yesterday).count() > 0
-	else:
-		return not userinfo.voted_for_day(today) and get_suggestions(today).count() > 0
+from models import *
+from utils import *
 
 class MainHandler(webapp.RequestHandler):
 	def get(self):
@@ -47,21 +28,11 @@ class MainHandler(webapp.RequestHandler):
 							'logout_url': users.create_logout_url('/'),
 							'user': user_info(),
 							'ask_to_rate' : ask_to_rate(),
-							'active_crew': get_active_crew(),
-							'dead_crew': get_dead_crew()
+							'active_crew': UserInfo.get_active_crew(),
+							'dead_crew': UserInfo.get_dead_crew()
 							}
 
 		self.response.out.write(template.render('index.html', template_values))
-
-def get_active_crew():
-	one_week_ago = datetime.now() - timedelta(DEAD_LIMIT)
-	return UserInfo.gql('WHERE lastposted >= DATE(:1, :2, :3)', 
-				one_week_ago.year, one_week_ago.month, one_week_ago.day)
-				
-def get_dead_crew():
-	one_week_ago = datetime.now() - timedelta(DEAD_LIMIT)
-	return UserInfo.gql('WHERE lastposted < DATE(:1, :2, :3)', 
-					one_week_ago.year, one_week_ago.month, one_week_ago.day)
 
 class RestaurantHandler(webapp.RequestHandler):
 	def get(self):
@@ -72,26 +43,6 @@ class RestaurantHandler(webapp.RequestHandler):
 
 		template_values = { 'restaurants': Restaurant.all().order('name') }
 		self.response.out.write(template.render('restaurants.html', template_values))
-
-def send_notification(message):
-	infos = get_active_crew()
-	targets = []
-	for info in infos:
-		if info.nickname != "" and info.user != users.get_current_user() and user_info().email != 'none':
-			targets.append(info)
-	if len(targets) == 0:
-		return
-	to = ",".join([ x.nickname + " <" + x.email + ">" for x in targets ])
-	message = "www.lunchdiscussion.com update\n " + message
-	mail.send_mail(sender="discuss@lunchdiscussion.com", to=to, subject="Lunch discussion update", body=message)
-
-def notify_new_message(comment, suggestion):
-	body = "On '" + suggestion.restaurant.name + "'\n"  + user_info().nickname + ": " + comment
-	send_notification(body)
-
-def notify_new_suggestion(suggestion):
-	body = user_info().nickname + " suggests going to '" + suggestion.restaurant.name + "' for lunch."
-	send_notification(body)		
 
 class SuggestionHandler(webapp.RequestHandler):
 	def get(self):
@@ -236,9 +187,6 @@ class RatingHandler(webapp.RequestHandler):
 		template_values = { 'day': day_title,
 							'suggestions': get_suggestions(day) }			
 		self.response.out.write(template.render('rate.html', template_values))		
-
-def get_suggestions(date):
-	return Suggestion.gql("WHERE date=DATE(:1, :2, :3)", date.year, date.month, date.day)
 
 def main():
 	userinfo = user_info()
