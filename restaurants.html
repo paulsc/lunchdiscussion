@@ -1,8 +1,5 @@
 		{% for restaurant in restaurants %}
 		<div>
 			<a href="javascript:newSuggestion('{{ restaurant.key }}')">{{ restaurant.name }}</a>
-			{% if restaurant.karma %}
-				<small>{{ restaurant.karma }}</small>
-			{% endif %}
 		</div>
 		{% endfor %}
