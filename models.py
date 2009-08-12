@@ -9,9 +9,11 @@ class Restaurant(db.Model):
 	name = db.StringProperty()
 	karma = db.IntegerProperty()
 	lunchcount = db.IntegerProperty()
+	lastlunched = db.DateProperty()
 	def add_vote(self, karma):
 		self.karma = self.karma + karma if self.karma else karma
 		self.lunchcount = self.lunchcount + 1 if self.lunchcount else 1
+		self.lastlunched = date.today()
 
 class UserInfo(db.Model):
 	user = db.UserProperty(auto_current_user_add=True)
