@@ -18,7 +18,7 @@ from utils import *
 
 class MainHandler(webapp.RequestHandler):
 	def get(self):
-		userinfo = user_info()
+		userinfo = UserInfo.current()
 		if userinfo == None:
 			self.redirect('/profile')
 			return
@@ -26,7 +26,7 @@ class MainHandler(webapp.RequestHandler):
 		now = datetime.now()
 		template_values = { 'now': now.strftime("%A %d/%m/%Y").lower(),
 							'logout_url': users.create_logout_url('/'),
-							'user': user_info(),
+							'user': userinfo,
 							'ask_to_rate' : ask_to_rate(),
 							'active_crew': UserInfo.get_active_crew(),
 							'dead_crew': UserInfo.get_dead_crew()
@@ -48,7 +48,7 @@ class SuggestionHandler(webapp.RequestHandler):
 	def get(self):
 		new = cgi.escape(self.request.get('add'))
 		if new != '':
-			userinfo = user_info()
+			userinfo = UserInfo.current()
 			sug = Suggestion(restaurant=db.get(new), author=userinfo)
 			notify_new_suggestion(sug)
 			sug.put()
@@ -74,9 +74,9 @@ class SuggestionHandler(webapp.RequestHandler):
 		suggestion = db.get(cgi.escape(self.request.get('suggestion')))
 		notify_new_message(self.request.get('text'), suggestion)
 		text = text.replace('\n', '<br/>')
-		comment = Comment(text=text, author=user_info(), suggestion=suggestion)
+		userinfo = UserInfo.current()
+		comment = Comment(text=text, author=userinfo, suggestion=suggestion)
 		comment.put()
-		userinfo = user_info()
 		userinfo.lastposted = date.today()
 		userinfo.put()
 		self.get()
@@ -88,7 +88,7 @@ class ProfileHandler(webapp.RequestHandler):
 			userinfo = db.get(userinfo)
 			to_render = 'profile.html'
 		else:
-			userinfo = user_info()
+			userinfo = UserInfo.current()
 			to_render = 'edit_profile.html'
 	
 		template_values = { 'userinfo': userinfo,
@@ -96,7 +96,7 @@ class ProfileHandler(webapp.RequestHandler):
 		self.response.out.write(template.render(to_render, template_values))
 
 	def post(self):
-		userinfo = user_info()
+		userinfo = UserInfo.current()
 		if userinfo == None:
 			userinfo = UserInfo()
 		userinfo.nickname = cgi.escape(self.request.get('nickname'))
@@ -121,7 +121,7 @@ class AvatarHandler(webapp.RequestHandler):
 	def get(self):
 		userkey = self.request.get("user")
 		if userkey == '':
-			userinfo = user_info()
+			userinfo = UserInfo.current()
 		else:
 			userinfo = db.get(userkey)
 
@@ -133,7 +133,7 @@ class AvatarHandler(webapp.RequestHandler):
 
 class RatingHandler(webapp.RequestHandler):	
 	def add_rating(self, suggestion, rating):
-		userinfo = user_info()
+		userinfo = UserInfo.current()
 		if userinfo.voted_for_day(suggestion.date):
 			logging.error('user %s already voted for that day.' % userinfo.nickname)
 			self.error(500)
@@ -150,11 +150,12 @@ class RatingHandler(webapp.RequestHandler):
 		restaurant.put()
 										
 		author = suggestion.author
-		author.add_vote(rating)
+		author.karma = incr(author.karma, rating)
 		author.put()
 				
-		userinfo = user_info()
+		userinfo = UserInfo.current()
 		userinfo.lastvoted = suggestion.date
+		userinfo.lunchcount = incr(userinfo.lunchcount)
 		userinfo.put()
 	
 	def get(self):
@@ -163,7 +164,7 @@ class RatingHandler(webapp.RequestHandler):
 		cancel = self.request.get('cancel')
 
 		if cancel == 'true':
-			userinfo = user_info()
+			userinfo = UserInfo.current()
 			today = date.today()
 			userinfo.lastvoted = today - timedelta(1) if is_morning() else today
 			userinfo.put()
@@ -185,11 +186,11 @@ class RatingHandler(webapp.RequestHandler):
 			day_title = "today"
 		
 		template_values = { 'day': day_title,
-							'suggestions': get_suggestions(day) }			
+							'suggestions': Suggestion.get_for_day(day) }			
 		self.response.out.write(template.render('rate.html', template_values))		
 
 def main():
-	userinfo = user_info()
+	userinfo = UserInfo.current()
 	application = webapp.WSGIApplication([('/', MainHandler),
 										  ('/profile', ProfileHandler),
 										  ('/restaurants', RestaurantHandler),

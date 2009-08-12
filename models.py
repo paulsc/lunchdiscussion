@@ -1,4 +1,6 @@
 from google.appengine.ext import db
+from google.appengine.api import users
+
 from datetime import date
 from datetime import timedelta
 from datetime import datetime
@@ -26,10 +28,9 @@ class UserInfo(db.Model):
 	lunchcount = db.IntegerProperty()
 	def voted_for_day(self, day):
 		return self.lastvoted == day
-	def add_vote(self, karma):
-		self.karma = self.karma + karma if self.karma else karma
-		self.lunchcount = self.lunchcount + 1 if self.lunchcount else 1
-	
+	@staticmethod
+	def current():
+		return UserInfo.gql("WHERE user = :1", users.get_current_user()).get()
 	@staticmethod
 	def get_active_crew():
 		one_week_ago = datetime.now() - timedelta(DEAD_LIMIT)
@@ -47,6 +48,10 @@ class Suggestion(db.Model):
 	date = db.DateProperty(auto_now_add=True)
 	def ordered_comments(self):
 		return self.comments.order('date')
+	@staticmethod
+	def get_for_day(date):
+		return Suggestion.gql("WHERE date=DATE(:1, :2, :3)", date.year, date.month, date.day)
+
 
 class Comment(db.Model):
 	suggestion = db.ReferenceProperty(Suggestion, collection_name='comments')
