@@ -9,6 +9,8 @@ from tzinfo import Eastern
 from models import UserInfo
 from models import Suggestion
 
+import logging
+
 def incr(var, val = 1): return 1 if var == None else var + val
 
 def is_morning():
@@ -28,7 +30,8 @@ def ask_to_rate():
 		
 def send_notification(message):
 	currentuser = users.get_current_user()
-	def f(i): i.nickname != "" and i.user != currentuser and i.email != 'none'
+	def f(i): return (i.nickname != "" and i.user != currentuser 
+						and i.email != 'none')
 	targets = filter(f, UserInfo.get_active_crew())
 	if len(targets) == 0:
 		return
