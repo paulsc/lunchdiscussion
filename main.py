@@ -42,7 +42,8 @@ class RestaurantHandler(webapp.RequestHandler):
 			res.put()
 
 		template_values = { 'restaurants': Restaurant.all().order('name') }
-		self.response.out.write(template.render('restaurants.html', template_values))
+		self.response.out.write(template.render('restaurants.html', 
+												template_values))
 
 class SuggestionHandler(webapp.RequestHandler):
 	def get(self):
@@ -66,8 +67,9 @@ class SuggestionHandler(webapp.RequestHandler):
 				now.year, now.month, now.day)
 
 		template_values = { 'suggestions': suggestions,
-												'user': users.get_current_user() }
-		self.response.out.write(template.render('suggestions.html', template_values))
+							'user': users.get_current_user() }
+		self.response.out.write(template.render('suggestions.html', 
+												template_values))
 
 	def post(self):
 		text = cgi.escape(self.request.get('text'))
@@ -135,14 +137,16 @@ class RatingHandler(webapp.RequestHandler):
 	def add_rating(self, suggestion, rating):
 		userinfo = UserInfo.current()
 		if userinfo.voted_for_day(suggestion.date):
-			logging.error('user %s already voted for that day.' % userinfo.nickname)
+			logging.error('user %s already voted for that day.' 
+							% userinfo.nickname)
 			self.error(500)
 			return
 				
 		restaurant = suggestion.restaurant
 		rating = int(rating)
 		if not rating in range(-2,3):
-			logging.error('invalid rating received from user %s: %d' % (userinfo.nickname, rating))
+			logging.error('invalid rating received from user %s: %d' 
+							% (userinfo.nickname, rating))
 			self.error(500)
 			return
 			

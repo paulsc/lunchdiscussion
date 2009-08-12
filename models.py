@@ -50,7 +50,8 @@ class Suggestion(db.Model):
 		return self.comments.order('date')
 	@staticmethod
 	def get_for_day(date):
-		return Suggestion.gql("WHERE date=DATE(:1, :2, :3)", date.year, date.month, date.day)
+		return Suggestion.gql("WHERE date=DATE(:1, :2, :3)", date.year, 
+								date.month, date.day)
 
 
 class Comment(db.Model):

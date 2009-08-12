@@ -43,6 +43,6 @@ def notify_new_message(comment, suggestion):
 	send_notification(body)
 
 def notify_new_suggestion(suggestion):
-	body = "%s suggests going to '%s' for lunch." % (
-			UserInfo.current().nickname, suggestion.restaurant.name)
+	body = "%s suggests going to '%s' for lunch." % \
+			(UserInfo.current().nickname, suggestion.restaurant.name)
 	send_notification(body)		
