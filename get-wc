@@ -1,0 +1,3 @@
+#!/bin/sh
+GLOBIGNORE=tzinfo.py
+wc -l *.py *.html *.yaml static/main.js static/style.css
