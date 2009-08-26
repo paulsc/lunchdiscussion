@@ -59,4 +59,19 @@ function showProfilePopup(user) {
 	});
 }
 
+function $RF(el, radioGroup) {
+	if($(el).type && $(el).type.toLowerCase() == 'radio') {
+		var radioGroup = $(el).name;
+		var el = $(el).form;
+	} else if ($(el).tagName.toLowerCase() != 'form') {
+		return false;
+	}
+
+	var checked = $(el).getInputs('radio', radioGroup).find(
+		function(re) {return re.checked;}
+	);
+	return (checked) ? $F(checked) : null;
+}		
+			
+
 

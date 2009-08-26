@@ -1,34 +1,16 @@
 ﻿{% extends "base.html" %}
 
 {% block content %}
-
 		<script type="text/javascript" src="static/main.js"></script>
 
-		<script type="text/javascript">
-		
-			function $RF(el, radioGroup) {
-				if($(el).type && $(el).type.toLowerCase() == 'radio') {
-					var radioGroup = $(el).name;
-					var el = $(el).form;
-				} else if ($(el).tagName.toLowerCase() != 'form') {
-					return false;
-				}
-			
-				var checked = $(el).getInputs('radio', radioGroup).find(
-					function(re) {return re.checked;}
-				);
-				return (checked) ? $F(checked) : null;
-			}		
-			
+		<script type="text/javascript">		
 			function verify() {
 				suggestion = $RF('form', 'suggestion');
-				rating = $RF('form', 'rating');
 
 				if (suggestion == null) {
 					alert('Please specify a restaurant');
 					return false;
 				}
-				
 				return true;
 			}
 		
@@ -41,16 +23,16 @@
 				document.forms.form.cancel.value = "true";
 				document.forms.form.submit();
 			}
-		
 		</script>
 
 		<center>
 		<h3>where did you eat {{ day }}?</h3>
 		
-		<form id="form" action="/rate" method="get" onSubmit="return verify()">
+		<form id="form" action="/rate" onSubmit="return verify()">
 		<table><tr><td>
 		{% for sug in suggestions %}
-			<input type="radio" name="suggestion" value="{{ sug.key }}" /> {{ sug.restaurant.name }}
+			<input type="radio" name="suggestion" value="{{ sug.key }}" /> 
+			{{ sug.restaurant.name }}
 			<br />
 		{% endfor %}
 		</table>

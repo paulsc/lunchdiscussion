@@ -162,11 +162,10 @@ class RatingHandler(webapp.RequestHandler):
 		userinfo.lunchcount = incr(userinfo.lunchcount)
 		userinfo.put()
 	
-	def get(self):
+	def post(self):
 		suggestion = self.request.get('suggestion')
 		rating = self.request.get('rating')
 		cancel = self.request.get('cancel')
-
 		if cancel == 'true':
 			userinfo = UserInfo.current()
 			today = date.today()
@@ -174,14 +173,13 @@ class RatingHandler(webapp.RequestHandler):
 			userinfo.put()
 			self.response.out.write(template.render('thanks.html', None))
 			return
-
 		if suggestion != '' and rating != '':
 			self.add_rating(db.get(suggestion), rating)
 			self.response.out.write(template.render('thanks.html', None))
 			return
+		self.response.out.write('missing some arguments')	
 
-			now = datetime.now(Eastern)
-
+	def get(self):
 		if is_morning():
 			day = datetime.now() - timedelta(1)
 			day_title = "yesterday"
@@ -193,6 +191,13 @@ class RatingHandler(webapp.RequestHandler):
 							'suggestions': Suggestion.get_for_day(day) }			
 		self.response.out.write(template.render('rate.html', template_values))		
 
+class StatsHandler(webapp.RequestHandler):
+	def get(self):
+		template_values = { 'karma_ranking': Restaurant.all().order('-karma').fetch(10),
+							'lunchcount_ranking': Restaurant.all().order('-lunchcount').fetch(10) }
+							
+		self.response.out.write(template.render('stats.html', template_values))
+
 def main():
 	userinfo = UserInfo.current()
 	application = webapp.WSGIApplication([('/', MainHandler),
@@ -200,7 +205,8 @@ def main():
 										  ('/restaurants', RestaurantHandler),
 										  ('/suggestions', SuggestionHandler),
 										  ('/avatar', AvatarHandler),
-										  ('/rate', RatingHandler)],
+										  ('/rate', RatingHandler),
+										  ('/stats', StatsHandler)],
                                        debug=True)
 	wsgiref.handlers.CGIHandler().run(application)
 

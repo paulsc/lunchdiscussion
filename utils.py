@@ -30,8 +30,8 @@ def ask_to_rate():
 		
 def send_notification(message):
 	currentuser = users.get_current_user()
-	def f(i): return (i.nickname != "" and i.user != currentuser 
-						and i.email != 'none')
+	def f(i): 
+		return i.nickname != "" and i.user != currentuser and i.email != 'none'
 	targets = filter(f, UserInfo.get_active_crew())
 	if len(targets) == 0:
 		return
