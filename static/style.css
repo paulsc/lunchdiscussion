@@ -17,6 +17,16 @@ body {
 	padding-left: 40px;
 }
 
+.comment_timesince {
+	color: #888888;
+	font-size: 10px;
+}
+
+.comment_author {
+	color: #888888;
+	font-size: 12px;
+}
+
 img {  
 	border-style: none;
 }
