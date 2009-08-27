@@ -28,7 +28,7 @@
 		<center>
 		<h3>where did you eat {{ day }}?</h3>
 		
-		<form id="form" action="/rate" onSubmit="return verify()">
+		<form id="form" action="/rate" method="post" onSubmit="return verify()">
 		<table><tr><td>
 		{% for sug in suggestions %}
 			<input type="radio" name="suggestion" value="{{ sug.key }}" /> 
