@@ -72,3 +72,6 @@ class RestaurantComment(db.Model):
 	text = db.TextProperty()
 	author = db.ReferenceProperty(UserInfo)
 	date = db.DateTimeProperty(auto_now_add=True)
+	rating = db.IntegerProperty()
+	def pretty_rating(self):
+		return [ 'very bad', 'bad', 'okay', 'good', 'FTW!!' ][self.rating + 2]

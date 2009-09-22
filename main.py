@@ -191,8 +191,9 @@ class RatingHandler(webapp.RequestHandler):
 		restaurant=db.get(restaurant)
 		comment = cgi.escape(self.request.get('comment'))
 		if comment != "":
+			comment = comment.replace('\n', '<br/>')	
 			comment = RestaurantComment(text=comment, restaurant=restaurant,
-						author=UserInfo.current())
+						author=UserInfo.current(), rating=rating)
 			comment.put()
 
 		self.add_rating(day, restaurant, author, rating)
