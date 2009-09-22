@@ -213,8 +213,8 @@ class StatsHandler(webapp.RequestHandler):
 		template_values = { 
 			'karma_ranking': Restaurant.all().order('-karma').fetch(10),
 			'lunchcount_ranking': Restaurant.all().order('-lunchcount').fetch(10),
-			'best_user': UserInfo.all().order('karma').fetch(10),
-			'biggest_eater': UserInfo.all().order('lunchcount').fetch(10)			
+			'best_user': UserInfo.all().order('-karma').fetch(10),
+			'biggest_eater': UserInfo.all().order('-lunchcount').fetch(10)			
 			}
 							
 		self.response.out.write(template.render('stats.html', template_values))
