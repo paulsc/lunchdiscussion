@@ -52,7 +52,10 @@ class Suggestion(db.Model):
 	def get_for_day(date):
 		return Suggestion.gql("WHERE date=DATE(:1, :2, :3)", date.year, 
 								date.month, date.day)
-
+	@staticmethod
+	def find(date, restaurant_key):
+		return Suggestion.gql("WHERE date=DATE(:1, :2, :3) AND restaurant = \
+				KEY(:4)", date.year, date.month, date.day, restaurant_key).get()
 
 class Comment(db.Model):
 	suggestion = db.ReferenceProperty(Suggestion, collection_name='comments')

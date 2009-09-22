@@ -134,16 +134,14 @@ class AvatarHandler(webapp.RequestHandler):
 			self.error(404)
 
 class RatingHandler(webapp.RequestHandler):	
-	def add_rating(self, suggestion, rating):
+	def add_rating(self, date, restaurant, author, rating):
 		userinfo = UserInfo.current()
-		if userinfo.voted_for_day(suggestion.date):
+		if userinfo.voted_for_day(date):
 			logging.error('user %s already voted for that day.' 
 							% userinfo.nickname)
 			self.error(500)
 			return
-				
-		restaurant = suggestion.restaurant
-		rating = int(rating)
+		
 		if not rating in range(-2,3):
 			logging.error('invalid rating received from user %s: %d' 
 							% (userinfo.nickname, rating))
@@ -152,32 +150,35 @@ class RatingHandler(webapp.RequestHandler):
 			
 		restaurant.add_vote(rating)
 		restaurant.put()
-										
-		author = suggestion.author
-		author.karma = incr(author.karma, rating)
-		author.put()
+						
+		if author:
+			author.karma = incr(author.karma, rating)
+			author.put()
 				
 		userinfo = UserInfo.current()
-		userinfo.lastvoted = suggestion.date
+		userinfo.lastvoted = date
 		userinfo.lunchcount = incr(userinfo.lunchcount)
 		userinfo.put()
 	
 	def post(self):
-		suggestion = self.request.get('suggestion')
-		rating = self.request.get('rating')
 		cancel = self.request.get('cancel')
+		day = date.fromordinal(int(self.request.get('day')))
+		
 		if cancel == 'true':
 			userinfo = UserInfo.current()
-			today = date.today()
-			userinfo.lastvoted = today - timedelta(1) if is_morning() else today
+			userinfo.lastvoted = day
 			userinfo.put()
 			self.response.out.write(template.render('thanks.html', None))
 			return
-		if suggestion != '' and rating != '':
-			self.add_rating(db.get(suggestion), rating)
-			self.response.out.write(template.render('thanks.html', None))
-			return
-		self.response.out.write('missing some arguments')	
+
+		restaurant = self.request.get(cgi.escape('restaurant'))
+		rating = int(self.request.get('rating'))
+		suggestion = Suggestion.find(day, restaurant)
+
+		author = suggestion.author if suggestion else None
+
+		self.add_rating(day, db.get(restaurant), author, rating)
+		self.response.out.write(template.render('thanks.html', None))
 
 	def get(self):
 		if is_morning():
@@ -187,8 +188,12 @@ class RatingHandler(webapp.RequestHandler):
 			day = datetime.now()
 			day_title = "today"
 		
-		template_values = { 'day': day_title,
-							'suggestions': Suggestion.get_for_day(day) }			
+		suggestions = Suggestion.get_for_day(day)
+		restaurants = [ s.restaurant for s in suggestions ]
+		
+		template_values = { 'day': day.toordinal(),
+							'day_title': day_title, 
+							'restaurants': restaurants }			
 		self.response.out.write(template.render('rate.html', template_values))		
 
 class StatsHandler(webapp.RequestHandler):

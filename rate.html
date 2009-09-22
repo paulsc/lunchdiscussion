@@ -5,7 +5,7 @@
 
 		<script type="text/javascript">		
 			function verify() {
-				suggestion = $RF('form', 'suggestion');
+				suggestion = $RF('form', 'restaurant');
 
 				if (suggestion == null) {
 					alert('Please specify a restaurant');
@@ -26,13 +26,13 @@
 		</script>
 
 		<center>
-		<h3>where did you eat {{ day }}?</h3>
+		<h3>where did you eat {{ day_title }}?</h3>
 		
 		<form id="form" action="/rate" method="post" onSubmit="return verify()">
 		<table><tr><td>
-		{% for sug in suggestions %}
-			<input type="radio" name="suggestion" value="{{ sug.key }}" /> 
-			{{ sug.restaurant.name }}
+		{% for res in restaurants %}
+			<input type="radio" name="restaurant" value="{{ res.key }}" /> 
+			{{ res.name }}
 			<br />
 		{% endfor %}
 		</table>
@@ -46,6 +46,7 @@
 		<input type="radio" name="rating" value="2" /> FTW!!
 		<br/><br/>
 		<input type="hidden" name="cancel" value="false" />
+		<input type="hidden" name="day" value="{{ day }}" />
 		<input type="button" value="didn't eat" onclick="cancelClick()"/>
 		<input type="button" value="submit" onclick="submitClick()"/>
 		</form>
