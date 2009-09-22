@@ -1,7 +1,14 @@
 	{% for sug in suggestions %}
 		<div class="suggestion">
 	
-			<b>{{ sug.restaurant.name }}</b> <small>by {{ sug.author.nickname }}
+			<b>
+			{% if sug.restaurant.has_comments %}
+				<a href="javascript:showRestaurantPopup('{{ sug.restaurant.key }}')">{{ sug.restaurant.name }}</a>
+			{% else %}
+				{{ sug.restaurant.name }}
+			{% endif %}
+			</b>
+			<small>by {{ sug.author.nickname }}
 		
 			<a id="comment_button{{ forloop.counter }}" href="#"
 				onclick="$('comment_box{{ forloop.counter }}').show(); return false;">comment</a>

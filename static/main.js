@@ -59,6 +59,14 @@ function showProfilePopup(user) {
 	});
 }
 
+function showRestaurantPopup(restaurant) {
+	myLightWindow.activateWindow({
+			href: '/restaurant-info?restaurant=' + restaurant, 
+			height: 400,
+			width: 500,
+	});
+}
+
 function $RF(el, radioGroup) {
 	if($(el).type && $(el).type.toLowerCase() == 'radio') {
 		var radioGroup = $(el).name;

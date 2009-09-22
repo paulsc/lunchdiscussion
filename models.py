@@ -16,6 +16,10 @@ class Restaurant(db.Model):
 		self.karma = self.karma + karma if self.karma else karma
 		self.lunchcount = self.lunchcount + 1 if self.lunchcount else 1
 		self.lastlunched = date.today()
+	def ordered_comments(self):
+		return self.comments.order('date').fetch(10)
+	def has_comments(self):
+		return self.comments.count() > 0
 
 class UserInfo(db.Model):
 	user = db.UserProperty(auto_current_user_add=True)
@@ -59,6 +63,12 @@ class Suggestion(db.Model):
 
 class Comment(db.Model):
 	suggestion = db.ReferenceProperty(Suggestion, collection_name='comments')
+	text = db.TextProperty()
+	author = db.ReferenceProperty(UserInfo)
+	date = db.DateTimeProperty(auto_now_add=True)
+
+class RestaurantComment(db.Model):
+	restaurant = db.ReferenceProperty(Restaurant, collection_name='comments')
 	text = db.TextProperty()
 	author = db.ReferenceProperty(UserInfo)
 	date = db.DateTimeProperty(auto_now_add=True)

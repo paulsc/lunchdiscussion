@@ -10,7 +10,7 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
-# Used 146 times in query history.
+# Used 275 times in query history.
 - kind: Comment
   properties:
   - name: suggestion
@@ -22,3 +22,9 @@ indexes:
   - name: suggestion
   - name: date
     direction: desc
+
+# Used 15 times in query history.
+- kind: RestaurantComment
+  properties:
+  - name: restaurant
+  - name: date

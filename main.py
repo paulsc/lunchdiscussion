@@ -118,6 +118,13 @@ class ProfileHandler(webapp.RequestHandler):
 			
 		userinfo.put()
 		self.redirect('/')
+		
+class RestaurantInfoHandler(webapp.RequestHandler):
+	def get(self):
+		restaurant = db.get(cgi.escape(self.request.get('restaurant')))
+		template_values = { 'name': restaurant.name,
+							'comments': restaurant.ordered_comments() }
+		self.response.out.write(template.render('restaurant-info.html', template_values))
 
 class AvatarHandler(webapp.RequestHandler):
 	def get(self):
@@ -173,15 +180,22 @@ class RatingHandler(webapp.RequestHandler):
 
 		rating = int(self.request.get('rating'))
 
-		restaurant = self.request.get(cgi.escape('restaurant'))
+		restaurant = cgi.escape(self.request.get('restaurant'))
 		
 		if restaurant == "other":
-			restaurant = self.request.get(cgi.escape('others'))
-		
+			restaurant = cgi.escape(self.request.get('others'))
+				
 		suggestion = Suggestion.find(day, restaurant)
 		author = suggestion.author if suggestion else None
 
-		self.add_rating(day, db.get(restaurant), author, rating)
+		restaurant=db.get(restaurant)
+		comment = cgi.escape(self.request.get('comment'))
+		if comment != "":
+			comment = RestaurantComment(text=comment, restaurant=restaurant,
+						author=UserInfo.current())
+			comment.put()
+
+		self.add_rating(day, restaurant, author, rating)
 		self.response.out.write(template.render('thanks.html', None))
 
 	def get(self):
@@ -223,6 +237,7 @@ def main():
 	userinfo = UserInfo.current()
 	application = webapp.WSGIApplication([('/', MainHandler),
 										  ('/profile', ProfileHandler),
+										  ('/restaurant-info', RestaurantInfoHandler),
 										  ('/restaurants', RestaurantHandler),
 										  ('/suggestions', SuggestionHandler),
 										  ('/avatar', AvatarHandler),
