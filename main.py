@@ -171,10 +171,14 @@ class RatingHandler(webapp.RequestHandler):
 			self.response.out.write(template.render('thanks.html', None))
 			return
 
-		restaurant = self.request.get(cgi.escape('restaurant'))
 		rating = int(self.request.get('rating'))
-		suggestion = Suggestion.find(day, restaurant)
 
+		restaurant = self.request.get(cgi.escape('restaurant'))
+		
+		if restaurant == "other":
+			restaurant = self.request.get(cgi.escape('others'))
+		
+		suggestion = Suggestion.find(day, restaurant)
 		author = suggestion.author if suggestion else None
 
 		self.add_rating(day, db.get(restaurant), author, rating)
@@ -190,10 +194,18 @@ class RatingHandler(webapp.RequestHandler):
 		
 		suggestions = Suggestion.get_for_day(day)
 		restaurants = [ s.restaurant for s in suggestions ]
-		
+		res_keys = [ r.key() for r in restaurants ]
+
+		other_restaurants = []
+		all_restaurants = Restaurant.all()
+		for res in all_restaurants:
+			if res.key() not in res_keys:
+				other_restaurants.append(res)
+				
 		template_values = { 'day': day.toordinal(),
 							'day_title': day_title, 
-							'restaurants': restaurants }			
+							'restaurants': restaurants,
+							'other_restaurants': other_restaurants }			
 		self.response.out.write(template.render('rate.html', template_values))		
 
 class StatsHandler(webapp.RequestHandler):

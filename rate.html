@@ -35,6 +35,17 @@
 			{{ res.name }}
 			<br />
 		{% endfor %}
+		
+		{% if other_restaurants %}
+			<input type="radio" name="restaurant" value="other" />
+			Other
+			<select name="others">
+				{% for res in other_restaurants %}
+					<option value="{{ res.key }}">{{ res.name }}</option>
+				{% endfor %}
+			</select>
+		{% endif %}
+		
 		</table>
 
 		<h3>how was it?</h3>
