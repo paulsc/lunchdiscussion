@@ -1,5 +1,10 @@
 		{% for restaurant in restaurants %}
 		<div>
 			<a href="javascript:newSuggestion('{{ restaurant.key }}')">{{ restaurant.name }}</a>
+			{% if restaurant.has_comments %}
+				<a href="javascript:showRestaurantPopup('{{ restaurant.key }}')">
+					<img src="images/comment.png" width="16" height="16" alt="comment"/>
+				</a>
+			{% endif %}
 		</div>
 		{% endfor %}
