@@ -23,7 +23,7 @@ indexes:
   - name: date
     direction: desc
 
-# Used 18 times in query history.
+# Used 19 times in query history.
 - kind: RestaurantComment
   properties:
   - name: restaurant
