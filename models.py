@@ -7,6 +7,10 @@ from datetime import datetime
 
 DEAD_LIMIT = 7
 
+class Group(db.Model):
+	name = db.StringProperty()
+	address = db.TextProperty()
+
 class Restaurant(db.Model):
 	name = db.StringProperty()
 	karma = db.IntegerProperty()

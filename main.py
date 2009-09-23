@@ -1,9 +1,12 @@
 import os
 import sys
 import cgi
+import urllib
 import logging
 import wsgiref.handlers
 
+from django.utils import simplejson as json
+from google.appengine.api.urlfetch import fetch
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
@@ -15,6 +18,8 @@ from tzinfo import Eastern
 
 from models import *
 from utils import *
+
+YWSID = "wVUGQPPLapq5irwFfJFcFw"
 
 class MainHandler(webapp.RequestHandler):
 	def get(self):
@@ -234,6 +239,28 @@ class StatsHandler(webapp.RequestHandler):
 							
 		self.response.out.write(template.render('stats.html', template_values))
 
+class SearchHandler(webapp.RequestHandler):
+	def get(self):
+		group = self.request.get('group')
+
+		if group == '':
+			res = template.render('search.html', { 'groups' : Group.all() })
+			self.response.out.write(res)
+			return
+		
+		group = db.get(group)
+		
+		address = urllib.quote_plus(group.address)
+		url = "http://api.yelp.com/business_review_search?term=restaurant&location=%s&ywsid=%s&radius=1" % ( address, YWSID ) 
+		response = fetch(url)
+		if response.status_code != 200:
+			logging.error('error making yelp api call')
+			return
+		
+		results = obj = json.loads(response.content)
+		template_values = { 'group': group, 'results': results }
+		self.response.out.write(template.render('result.html', template_values))
+
 def main():
 	userinfo = UserInfo.current()
 	application = webapp.WSGIApplication([('/', MainHandler),
@@ -243,6 +270,7 @@ def main():
 										  ('/suggestions', SuggestionHandler),
 										  ('/avatar', AvatarHandler),
 										  ('/rate', RatingHandler),
+										  ('/search', SearchHandler), 
 										  ('/stats', StatsHandler)],
                                        debug=True)
 	wsgiref.handlers.CGIHandler().run(application)
