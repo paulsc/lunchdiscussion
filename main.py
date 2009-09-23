@@ -212,7 +212,7 @@ class RatingHandler(webapp.RequestHandler):
 		res_keys = [ r.key() for r in restaurants ]
 
 		other_restaurants = []
-		all_restaurants = Restaurant.all()
+		all_restaurants = Restaurant.all().order('name')
 		for res in all_restaurants:
 			if res.key() not in res_keys:
 				other_restaurants.append(res)
