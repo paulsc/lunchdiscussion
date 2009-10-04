@@ -53,8 +53,8 @@ class RestaurantHandler(webapp.RequestHandler):
 class SuggestionHandler(webapp.RequestHandler):
 	def get(self):
 		new = cgi.escape(self.request.get('add'))
+		userinfo = UserInfo.current()
 		if new != '':
-			userinfo = UserInfo.current()
 			sug = Suggestion(restaurant=db.get(new), author=userinfo)
 			notify_new_suggestion(sug)
 			sug.put()
@@ -65,7 +65,18 @@ class SuggestionHandler(webapp.RequestHandler):
 		remove = cgi.escape(self.request.get('remove'))
 		if remove != '':
 			suggestion = db.get(remove)
-			suggestion.delete()	
+			if suggestion.author.user == userinfo.user:
+				suggestion.delete()	
+			else:
+				logging.error('user: %s tried to delete suggestion he doesn\'t own' % userinfo.nickname)
+
+		remove_comment = cgi.escape(self.request.get('remove_comment'))
+		if remove_comment != '':
+			comment = db.get(remove_comment)
+			if comment.author.user == userinfo.user:
+				comment.delete()
+			else:
+				logging.eror('user: %s tried to delete comment he doesn\'t own' % userinfo.nickname)
 
 		now = datetime.now()
 		suggestions = Suggestion.gql("WHERE date=DATE(:1, :2, :3)", 

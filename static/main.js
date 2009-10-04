@@ -33,6 +33,15 @@ function removeSuggestion(key) {
 	}
 }
 
+function removeComment(key) {
+	var answer = confirm("Are you sure?");
+	if (answer) {
+		new Ajax.Updater('suggestions', 
+				'/suggestions?remove_comment=' + key,
+				{ method: 'get' });
+	}
+}
+
 function addRating(restaurantKey, rating) {
 	new Ajax.Request('/rate?restaurant=' + restaurantKey + '&rating=' + rating, { 
 			method: 'get',
