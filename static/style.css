@@ -32,6 +32,10 @@ body {
 	font-size: 12px;
 }
 
+.separator {
+	color: #aaaaaa;
+}
+
 img {  
 	border-style: none;
 }
