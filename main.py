@@ -1,6 +1,7 @@
 import os
 import sys
 import cgi
+import time
 import base64
 import urllib
 import urllib2
@@ -276,7 +277,7 @@ class SearchHandler(webapp.RequestHandler):
 
 class TwitterHandler(webapp.RequestHandler):
 	def get_timeline(self):
-		url = 'http://twitter.com/statuses/friends_timeline.json?count=10'
+		url = 'http://twitter.com/statuses/friends_timeline.json?count=6'
 		req = urllib2.Request(url)
 		auth = base64.encodestring('lunchdiscussr:1379zz')[:-1]
 		req.add_header('Authorization', 'Basic %s' % auth)
@@ -284,7 +285,18 @@ class TwitterHandler(webapp.RequestHandler):
 		return json.loads(response.read())
 
 	def get(self):
-		context = { 'timeline': self.get_timeline() }
+		try:
+			timeline = self.get_timeline()
+		except URLError:
+			self.response.out.write('error loading twitter feed')
+			return
+
+		for status in timeline:
+			time_struct = time.strptime(status['created_at'], "%a %b %d %H:%M:%S +0000 %Y")
+			date = datetime(*time_struct[:6])
+			status['created_at'] = date
+			logging.error('date: ' + str(date))
+		context = { 'timeline': timeline }
 		self.response.out.write(template.render('twitter.html', context))
 
 def main():

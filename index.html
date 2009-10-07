@@ -53,7 +53,7 @@
 			
 		<br/><br/>
 
-		<h2>it's {{ now }}, discuss!</h2>
+		<table><tr><td width="100%" valign="top">
 
 		<div id="suggestions"></div>
 
@@ -62,5 +62,11 @@
 		<span id="restaurants"></span>
 		<input type="text" id="restaurant_name" />
 		<input type="button" value="add" onclick="javascript:addRestaurant()" />
+
+		</td><td valign="top">
+
+		<div id="twitter"></div>
+
+		</td></tr></table>
 
 {% endblock %}

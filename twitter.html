@@ -2,13 +2,15 @@
 
 {% block content %}
 
+		<span class="twitter_title">twitfood</span>
 		{% for status in timeline %}
 		
-		{{ status.user.screen_name }} 
-		<small>({{ status.created_at }})</small>: 
-		{{ status.text }}
-			<br/><br/>
-		
+		<div class="twitter_status">
+			<span class="username">{{ status.user.screen_name }}</span>
+			<span class="created_at">{{ status.created_at|timesince }} ago</span>
+			<span class="text">{{ status.text }}</span>
+		</div>
+
 		{% endfor %}
 
 {% endblock %}
