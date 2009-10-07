@@ -277,7 +277,7 @@ class SearchHandler(webapp.RequestHandler):
 
 class TwitterHandler(webapp.RequestHandler):
 	def get_timeline(self):
-		url = 'http://twitter.com/statuses/friends_timeline.json?count=6'
+		url = 'http://twitter.com/statuses/friends_timeline.json?count=8'
 		req = urllib2.Request(url)
 		auth = base64.encodestring('lunchdiscussr:1379zz')[:-1]
 		req.add_header('Authorization', 'Basic %s' % auth)
