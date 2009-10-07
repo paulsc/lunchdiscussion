@@ -1,0 +1,14 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+		{% for status in timeline %}
+		
+		{{ status.user.screen_name }} 
+		<small>({{ status.created_at }})</small>: 
+		{{ status.text }}
+			<br/><br/>
+		
+		{% endfor %}
+
+{% endblock %}
