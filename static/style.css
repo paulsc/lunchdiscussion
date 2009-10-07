@@ -93,10 +93,6 @@ a:visited {
 	margin: 5px;
 }
 
-.twitter_status .username {
-	font-weight: bold;
-}
-
 .twitter_status .created_at {
 	font-size: 9px;
 }
