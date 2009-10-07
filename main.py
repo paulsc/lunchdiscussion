@@ -1,7 +1,9 @@
 import os
 import sys
 import cgi
+import base64
 import urllib
+import urllib2
 import logging
 import wsgiref.handlers
 
@@ -272,6 +274,19 @@ class SearchHandler(webapp.RequestHandler):
 		template_values = { 'group': group, 'results': results }
 		self.response.out.write(template.render('result.html', template_values))
 
+class TwitterHandler(webapp.RequestHandler):
+	def get_timeline(self):
+		url = 'http://twitter.com/statuses/friends_timeline.json?count=10'
+		req = urllib2.Request(url)
+		auth = base64.encodestring('lunchdiscussr:1379zz')[:-1]
+		req.add_header('Authorization', 'Basic %s' % auth)
+		response = urllib2.urlopen(req)
+		return json.loads(response.read())
+
+	def get(self):
+		context = { 'timeline': self.get_timeline() }
+		self.response.out.write(template.render('twitter.html', context))
+
 def main():
 	userinfo = UserInfo.current()
 	application = webapp.WSGIApplication([('/', MainHandler),
@@ -282,6 +297,7 @@ def main():
 										  ('/avatar', AvatarHandler),
 										  ('/rate', RatingHandler),
 										  ('/search', SearchHandler), 
+											('/twitter', TwitterHandler),
 										  ('/stats', StatsHandler)],
                                        debug=True)
 	wsgiref.handlers.CGIHandler().run(application)
