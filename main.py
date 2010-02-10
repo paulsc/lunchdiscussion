@@ -3,10 +3,11 @@ import sys
 import cgi
 import time
 import base64
-import urllib
 import urllib2
 import logging
 import wsgiref.handlers
+
+from urllib2 import URLError
 
 from django.utils import simplejson as json
 from google.appengine.api.urlfetch import fetch
@@ -14,17 +15,17 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
 from google.appengine.api import images
+
 from datetime import datetime
 from datetime import timedelta
 from datetime import date
+
 from tzinfo import Eastern
 
 from models import *
 from utils import *
 
-YWSID = "wVUGQPPLapq5irwFfJFcFw"
-
-class MainHandler(webapp.RequestHandler):
+class MainHandler(CustomHandler):
 	def get(self):
 		userinfo = UserInfo.current()
 		if userinfo == None:
@@ -32,7 +33,7 @@ class MainHandler(webapp.RequestHandler):
 			return
 
 		now = datetime.now()
-		template_values = { 'now': now.strftime("%A %d/%m/%Y").lower(),
+		context = { 'now': now.strftime("%A %d/%m/%Y").lower(),
 							'logout_url': users.create_logout_url('/'),
 							'user': userinfo,
 							'ask_to_rate' : ask_to_rate(),
@@ -40,20 +41,19 @@ class MainHandler(webapp.RequestHandler):
 							'dead_crew': UserInfo.get_dead_crew()
 							}
 
-		self.response.out.write(template.render('index.html', template_values))
+		self.render('index', context)
 
-class RestaurantHandler(webapp.RequestHandler):
+class RestaurantHandler(CustomHandler):
 	def get(self):
 		new = cgi.escape(self.request.get('add'))
 		if new != '':
 			res = Restaurant(name=new.capitalize())
 			res.put()
 
-		template_values = { 'restaurants': Restaurant.all().order('name') }
-		self.response.out.write(template.render('restaurants.html', 
-												template_values))
+		context = { 'restaurants': Restaurant.all().order('name') }
+		self.render('restaurants', context)
 
-class SuggestionHandler(webapp.RequestHandler):
+class SuggestionHandler(CustomHandler):
 	def get(self):
 		new = cgi.escape(self.request.get('add'))
 		userinfo = UserInfo.current()
@@ -85,10 +85,8 @@ class SuggestionHandler(webapp.RequestHandler):
 		suggestions = Suggestion.gql("WHERE date=DATE(:1, :2, :3)", 
 				now.year, now.month, now.day)
 
-		template_values = { 'suggestions': suggestions,
-							'user': users.get_current_user() }
-		self.response.out.write(template.render('suggestions.html', 
-												template_values))
+		context = { 'suggestions': suggestions, 'user': users.get_current_user() }
+		self.render('suggestions', context)
 
 	def post(self):
 		text = cgi.escape(self.request.get('text'))
@@ -102,19 +100,18 @@ class SuggestionHandler(webapp.RequestHandler):
 		userinfo.put()
 		self.get()
 
-class ProfileHandler(webapp.RequestHandler):
+class ProfileHandler(CustomHandler):
 	def get(self):
 		userinfo = cgi.escape(self.request.get('user'))
 		if userinfo != '':
 			userinfo = db.get(userinfo)
-			to_render = 'profile.html'
+			to_render = 'profile'
 		else:
 			userinfo = UserInfo.current()
-			to_render = 'edit_profile.html'
+			to_render = 'edit_profile'
 	
-		template_values = { 'userinfo': userinfo,
-							'user': users.get_current_user() }
-		self.response.out.write(template.render(to_render, template_values))
+		context = { 'userinfo': userinfo, 'user': users.get_current_user() }
+		self.render(to_render, context)
 
 	def post(self):
 		userinfo = UserInfo.current()
@@ -138,14 +135,14 @@ class ProfileHandler(webapp.RequestHandler):
 		userinfo.put()
 		self.redirect('/')
 		
-class RestaurantInfoHandler(webapp.RequestHandler):
+class RestaurantInfoHandler(CustomHandler):
 	def get(self):
 		restaurant = db.get(cgi.escape(self.request.get('restaurant')))
-		template_values = { 'name': restaurant.name,
+		context = { 'name': restaurant.name,
 							'comments': restaurant.ordered_comments() }
-		self.response.out.write(template.render('restaurant-info.html', template_values))
+		self.render('restaurant-info', context)
 
-class AvatarHandler(webapp.RequestHandler):
+class AvatarHandler(CustomHandler):
 	def get(self):
 		userkey = self.request.get("user")
 		if userkey == '':
@@ -159,7 +156,7 @@ class AvatarHandler(webapp.RequestHandler):
 		else:
 			self.error(404)
 
-class RatingHandler(webapp.RequestHandler):	
+class RatingHandler(CustomHandler):	
 	def add_rating(self, date, restaurant, author, rating):
 		userinfo = UserInfo.current()
 		if userinfo.voted_for_day(date):
@@ -194,7 +191,7 @@ class RatingHandler(webapp.RequestHandler):
 			userinfo = UserInfo.current()
 			userinfo.lastvoted = day
 			userinfo.put()
-			self.response.out.write(template.render('thanks.html', None))
+			self.render('thanks', None)
 			return
 
 		rating = int(self.request.get('rating'))
@@ -216,7 +213,7 @@ class RatingHandler(webapp.RequestHandler):
 			comment.put()
 
 		self.add_rating(day, restaurant, author, rating)
-		self.response.out.write(template.render('thanks.html', None))
+		self.render('thanks', None)
 
 	def get(self):
 		if is_morning():
@@ -236,46 +233,24 @@ class RatingHandler(webapp.RequestHandler):
 			if res.key() not in res_keys:
 				other_restaurants.append(res)
 				
-		template_values = { 'day': day.toordinal(),
+		context = { 'day': day.toordinal(),
 							'day_title': day_title, 
 							'restaurants': restaurants,
 							'other_restaurants': other_restaurants }			
-		self.response.out.write(template.render('rate.html', template_values))		
+		self.render('rate', context)		
 
-class StatsHandler(webapp.RequestHandler):
+class StatsHandler(CustomHandler):
 	def get(self):
-		template_values = { 
+		context = { 
 			'karma_ranking': Restaurant.all().order('-karma').fetch(10),
 			'lunchcount_ranking': Restaurant.all().order('-lunchcount').fetch(10),
 			'best_user': UserInfo.all().order('-karma').fetch(5),
 			'biggest_eater': UserInfo.all().order('-lunchcount').fetch(5)			
 			}
 							
-		self.response.out.write(template.render('stats.html', template_values))
+		self.render('stats', context)
 
-class SearchHandler(webapp.RequestHandler):
-	def get(self):
-		group = self.request.get('group')
-
-		if group == '':
-			res = template.render('search.html', { 'groups' : Group.all() })
-			self.response.out.write(res)
-			return
-		
-		group = db.get(group)
-		
-		address = urllib.quote_plus(group.address)
-		url = "http://api.yelp.com/business_review_search?term=restaurant&location=%s&ywsid=%s&radius=1" % ( address, YWSID ) 
-		response = fetch(url)
-		if response.status_code != 200:
-			logging.error('error making yelp api call')
-			return
-		
-		results = obj = json.loads(response.content)
-		template_values = { 'group': group, 'results': results }
-		self.response.out.write(template.render('result.html', template_values))
-
-class TwitterHandler(webapp.RequestHandler):
+class TwitterHandler(CustomHandler):
 	def get_timeline(self):
 		url = 'http://twitter.com/statuses/friends_timeline.json?count=8'
 		req = urllib2.Request(url)
@@ -297,7 +272,7 @@ class TwitterHandler(webapp.RequestHandler):
 			status['created_at'] = date
 			logging.error('date: ' + str(date))
 		context = { 'timeline': timeline }
-		self.response.out.write(template.render('twitter.html', context))
+		self.render('twitter', context)
 
 def main():
 	userinfo = UserInfo.current()
@@ -308,7 +283,6 @@ def main():
 										  ('/suggestions', SuggestionHandler),
 										  ('/avatar', AvatarHandler),
 										  ('/rate', RatingHandler),
-										  ('/search', SearchHandler), 
 											('/twitter', TwitterHandler),
 										  ('/stats', StatsHandler)],
                                        debug=True)

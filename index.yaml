@@ -10,20 +10,17 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
-# Used 112 times in query history.
 - kind: Comment
   properties:
   - name: suggestion
   - name: date
 
-# Unused in query history -- copied from input.
 - kind: Comment
   properties:
   - name: suggestion
   - name: date
     direction: desc
 
-# Used 3 times in query history.
 - kind: RestaurantComment
   properties:
   - name: restaurant

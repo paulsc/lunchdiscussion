@@ -1,0 +1,18 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+		<span class="twitter_title">twitfood</span>
+		{% for status in timeline %}
+		
+		<div class="twitter_status">
+			<span class="username">
+				<a href="http://twitter.com/{{ status.user.screen_name }}">{{ status.user.screen_name }}</a>
+			</span>
+			<span class="created_at">{{ status.created_at|timesince }} ago</span>
+			<span class="text">{{ status.text }}</span>
+		</div>
+
+		{% endfor %}
+
+{% endblock %}

@@ -1,5 +1,9 @@
-﻿from google.appengine.api import mail
+﻿import os
+
+from google.appengine.api import mail
 from google.appengine.api import users
+from google.appengine.ext import webapp
+from google.appengine.ext.webapp import template
 
 from datetime import datetime
 from datetime import date
@@ -10,6 +14,12 @@ from models import UserInfo
 from models import Suggestion
 
 import logging
+
+class CustomHandler(webapp.RequestHandler):
+	def render(self, template_name, context):
+		path = os.path.join(os.path.dirname(__file__), 
+				'templates', '%s.html' % template_name) 
+		self.response.out.write(template.render(path, context))
 
 def incr(var, val = 1): return 1 if var == None else var + val
 
