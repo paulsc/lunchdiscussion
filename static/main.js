@@ -1,5 +1,4 @@
-﻿new Ajax.Updater('twitter', '/twitter', { method: 'get' });
-
+﻿
 function addRestaurant() {
 	new Ajax.Updater('restaurants', 
 			'/restaurants?add=' + $F('restaurant_name'),

@@ -250,29 +250,6 @@ class StatsHandler(CustomHandler):
 							
 		self.render('stats', context)
 
-class TwitterHandler(CustomHandler):
-	def get_timeline(self):
-		url = 'http://twitter.com/statuses/friends_timeline.json?count=8'
-		req = urllib2.Request(url)
-		auth = base64.encodestring('lunchdiscussr:1379zz')[:-1]
-		req.add_header('Authorization', 'Basic %s' % auth)
-		response = urllib2.urlopen(req)
-		return json.loads(response.read())
-
-	def get(self):
-		try:
-			timeline = self.get_timeline()
-		except Exception:
-			self.response.out.write('couldn\'t get twitter feed')
-			return
-
-		for status in timeline:
-			time_struct = time.strptime(status['created_at'], "%a %b %d %H:%M:%S +0000 %Y")
-			date = datetime(*time_struct[:6])
-			status['created_at'] = date
-		context = { 'timeline': timeline }
-		self.render('twitter', context)
-
 def main():
 	userinfo = UserInfo.current()
 	application = webapp.WSGIApplication([('/', MainHandler),
@@ -282,7 +259,6 @@ def main():
 										  ('/suggestions', SuggestionHandler),
 										  ('/avatar', AvatarHandler),
 										  ('/rate', RatingHandler),
-											('/twitter', TwitterHandler),
 										  ('/stats', StatsHandler)],
                                        debug=True)
 	wsgiref.handlers.CGIHandler().run(application)
