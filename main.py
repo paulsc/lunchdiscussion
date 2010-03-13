@@ -36,7 +36,7 @@ class MainHandler(CustomHandler):
 		context = { 'now': now.strftime("%A %d/%m/%Y").lower(),
 					'logout_url': users.create_logout_url('/'),
 					'user': userinfo,
-					'ask_to_rate' : True,
+					'ask_to_rate' : ask_to_rate(),
 					'active_crew': UserInfo.get_active_crew(),
 					'dead_crew': UserInfo.get_dead_crew(), 
 					'suggestions': Suggestion.get_todays(),
