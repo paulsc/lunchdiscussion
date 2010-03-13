@@ -1,16 +1,12 @@
 ﻿import os
 
-from google.appengine.api import mail
-from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
-from datetime import datetime
-from datetime import date
-from datetime import timedelta
+from datetime import datetime, date, timedelta
 from tzinfo import Eastern
 
-from models import UserInfo, Suggestion, ReplyTo
+from models import UserInfo, Suggestion
 
 import logging
 
@@ -37,31 +33,4 @@ def ask_to_rate():
 		return (not userinfo.voted_for_day(today) 
 				and Suggestion.get_for_day(today).count() > 0)
 		
-def send_notification(message, suggestion):
-	currentuser = users.get_current_user()
-	def f(i): 
-		return i.nickname != "" and i.user != currentuser and i.email != 'none'
-	targets = filter(f, UserInfo.get_active_crew())
 
-	def send_to_target(target):
-		email = mail.EmailMessage(sender="discuss@lunchdiscussion.com")
-		email.subject = "Lunchdiscussion.com update"
-		email.body = "lunchdiscussion.com update\n " + message
-		email.to = "%s <%s>" % (target.nickname, target.email)
-		email.to = "paul <paul167@gmail.com"
-		reply_to = ReplyTo(user=target, suggestion=suggestion)
-		email.reply_to = str(reply_to)
-		email.send()
-		reply_to.put()
-	
-	map(send_to_target, targets)
-	
-def notify_new_message(comment, suggestion):
-	body = "On '%s'\n%s: %s" % (suggestion.restaurant.name, 
-								UserInfo.current().nickname, comment)
-	send_notification(body, suggestion)
-
-def notify_new_suggestion(suggestion):
-	body = "%s suggests going to '%s' for lunch." % \
-			(UserInfo.current().nickname, suggestion.restaurant.name)
-	send_notification(body, suggestion)		
