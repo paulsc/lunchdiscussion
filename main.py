@@ -262,7 +262,7 @@ class TwitterHandler(CustomHandler):
 	def get(self):
 		try:
 			timeline = self.get_timeline()
-		except Error:
+		except Exception:
 			self.response.out.write('couldn\'t get twitter feed')
 			return
 
