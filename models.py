@@ -79,6 +79,14 @@ class Comment(db.Model):
 	text = db.TextProperty()
 	author = db.ReferenceProperty(UserInfo)
 	date = db.DateTimeProperty(auto_now_add=True)
+	@staticmethod
+	def post(text, author, suggestion):
+		comment = Comment(text=text, author=author, suggestion=suggestion)
+		super(Comment, comment).put()
+		author.lastposted = date.today()
+		author.put()
+
+	def put(self): raise Exception('use post() instead')
 
 class RestaurantComment(db.Model):
 	restaurant = db.ReferenceProperty(Restaurant, collection_name='comments')

@@ -14,7 +14,7 @@ handlers:
   static_dir: images
 
 - url: /_ah/mail/.+
-  script: email.py
+  script: emailhandler.py
   login: admin
 
 - url: /cron/.+

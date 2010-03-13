@@ -90,10 +90,7 @@ class SuggestionHandler(CustomHandler):
 		suggestion = db.get(cgi.escape(self.request.get('suggestion')))
 		text = text.replace('\n', '<br/>')
 		userinfo = UserInfo.current()
-		comment = Comment(text=text, author=userinfo, suggestion=suggestion)
-		comment.put()
-		userinfo.lastposted = date.today()
-		userinfo.put()
+		Comment.post(text, userinfo, suggestion)
 		notify_new_comment(self.request.get('text'), suggestion)
 		self.get()
 
