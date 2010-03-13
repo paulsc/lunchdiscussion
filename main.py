@@ -11,10 +11,10 @@ from urllib2 import URLError
 
 from django.utils import simplejson as json
 from google.appengine.api.urlfetch import fetch
-from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
-from google.appengine.api import users
 from google.appengine.api import images
+from google.appengine.ext import webapp
+from google.appengine.api import users
 
 from datetime import datetime
 from datetime import timedelta
@@ -34,12 +34,14 @@ class MainHandler(CustomHandler):
 
 		now = datetime.now()
 		context = { 'now': now.strftime("%A %d/%m/%Y").lower(),
-							'logout_url': users.create_logout_url('/'),
-							'user': userinfo,
-							'ask_to_rate' : ask_to_rate(),
-							'active_crew': UserInfo.get_active_crew(),
-							'dead_crew': UserInfo.get_dead_crew()
-							}
+					'logout_url': users.create_logout_url('/'),
+					'user': userinfo,
+					'ask_to_rate' : ask_to_rate(),
+					'active_crew': UserInfo.get_active_crew(),
+					'dead_crew': UserInfo.get_dead_crew(), 
+					'suggestions': Suggestion.get_todays(),
+					'restaurants': Restaurant.all().order('name'),
+					}
 
 		self.render('index', context)
 
@@ -81,11 +83,9 @@ class SuggestionHandler(CustomHandler):
 			else:
 				logging.eror('user: %s tried to delete comment he doesn\'t own' % userinfo.nickname)
 
-		now = datetime.now()
-		suggestions = Suggestion.gql("WHERE date=DATE(:1, :2, :3)", 
-				now.year, now.month, now.day)
+		context = { 'suggestions': Suggestion.get_todays(), 
+					'user': users.get_current_user() }
 
-		context = { 'suggestions': suggestions, 'user': users.get_current_user() }
 		self.render('suggestions', context)
 
 	def post(self):
@@ -262,15 +262,14 @@ class TwitterHandler(CustomHandler):
 	def get(self):
 		try:
 			timeline = self.get_timeline()
-		except URLError:
-			self.response.out.write('error loading twitter feed')
+		except Error:
+			self.response.out.write('couldn\'t get twitter feed')
 			return
 
 		for status in timeline:
 			time_struct = time.strptime(status['created_at'], "%a %b %d %H:%M:%S +0000 %Y")
 			date = datetime(*time_struct[:6])
 			status['created_at'] = date
-			logging.error('date: ' + str(date))
 		context = { 'timeline': timeline }
 		self.render('twitter', context)
 

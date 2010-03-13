@@ -54,12 +54,19 @@ class Suggestion(db.Model):
 	author = db.ReferenceProperty(UserInfo)
 	restaurant = db.ReferenceProperty(Restaurant)
 	date = db.DateProperty(auto_now_add=True)
+
 	def ordered_comments(self):
 		return self.comments.order('date')
+
 	@staticmethod
 	def get_for_day(date):
 		return Suggestion.gql("WHERE date=DATE(:1, :2, :3)", date.year, 
 								date.month, date.day)
+
+	@staticmethod
+	def get_todays():
+		return Suggestion.get_for_day(datetime.now())
+
 	@staticmethod
 	def find(date, restaurant_key):
 		return Suggestion.gql("WHERE date=DATE(:1, :2, :3) AND restaurant = \

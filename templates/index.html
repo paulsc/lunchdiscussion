@@ -48,24 +48,24 @@
 					{% endfor %}					
 			</tr></table>	
 		</div>
-		
-		<div class="clear"/>
+		<div class="clear"/> <br/><br/> 
 			
-		<br/><br/>
+			<table>
+				<tr><td width="100%" valign="top"> 
+						<div id="suggestions">
+							{% include "suggestions.html" %}	
+						</div> <br/>
 
-		<table><tr><td width="100%" valign="top">
+						<span id="restaurants">
+							{% include "restaurants.html" %}	
+						</span>
+			
+				<input type="text" id="restaurant_name" />
+				<input type="button" value="add" onclick="javascript:addRestaurant()" />
 
-		<div id="suggestions"></div>
+				</td><td valign="top">
 
-		<br/>
-
-		<span id="restaurants"></span>
-		<input type="text" id="restaurant_name" />
-		<input type="button" value="add" onclick="javascript:addRestaurant()" />
-
-		</td><td valign="top">
-
-		<div id="twitter"></div>
+				<div id="twitter"></div>
 
 		</td></tr></table>
 

@@ -1,6 +1,4 @@
-﻿new Ajax.Updater('restaurants', '/restaurants', { method: 'get' });
-new Ajax.Updater('suggestions', '/suggestions', { method: 'get' });
-new Ajax.Updater('twitter', '/twitter', { method: 'get' });
+﻿new Ajax.Updater('twitter', '/twitter', { method: 'get' });
 
 function addRestaurant() {
 	new Ajax.Updater('restaurants', 
