@@ -13,7 +13,7 @@
 			<a id="comment_button{{ forloop.counter }}" href="#"
 				onclick="$('comment_box{{ forloop.counter }}').show(); return false;">
 				<img src="images/comment.png" alt="comment" width="16" height="16" /></a>
-			{% ifequal sug.author.user user %}
+			{% ifequal sug.author.user userinfo.user %}
 			<a href="#" onclick="removeSuggestion('{{ sug.key }}')">
 				<img src="images/delete.png" alt="delte" width="14" height="14"/>
 			</a>
@@ -33,7 +33,7 @@
 							<span class="comment_author">{{ comment.author.nickname }}</span> 
 							<span class="comment_timesince">{{ comment.date|timesince }} ago</span>
 							<div class="comment_text">{{ comment.text }}
-							{% ifequal comment.author.user user %}
+							{% ifequal comment.author.user userinfo.user %}
 								<a href="#" onclick="removeComment('{{ comment.key }} ')">
 									<img src="images/delete.png" alt="delete" width="12" height="12"/>
 								</a>

@@ -35,7 +35,7 @@ class MainHandler(CustomHandler):
 		now = datetime.now()
 		context = { 'now': now.strftime("%A %d/%m/%Y").lower(),
 					'logout_url': users.create_logout_url('/'),
-					'user': userinfo,
+					'userinfo': userinfo,
 					'ask_to_rate' : ask_to_rate(),
 					'active_crew': UserInfo.get_active_crew(),
 					'dead_crew': UserInfo.get_dead_crew(), 
@@ -84,7 +84,7 @@ class SuggestionHandler(CustomHandler):
 				logging.eror('user: %s tried to delete comment he doesn\'t own' % userinfo.nickname)
 
 		context = { 'suggestions': Suggestion.get_todays(), 
-					'user': users.get_current_user() }
+					'userinfo': userinfo }
 
 		self.render('suggestions', context)
 

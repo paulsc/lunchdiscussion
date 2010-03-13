@@ -1,5 +1,5 @@
 application: lunchdiscuss
-version: 1
+version: test
 runtime: python
 api_version: 1
 

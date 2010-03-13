@@ -1,3 +1,5 @@
+import uuid
+
 from google.appengine.ext import db
 from google.appengine.api import users
 
@@ -86,3 +88,13 @@ class RestaurantComment(db.Model):
 	rating = db.IntegerProperty()
 	def pretty_rating(self):
 		return [ 'very bad', 'bad', 'okay', 'good', 'FTW!!' ][self.rating + 2]
+
+class ReplyTo(db.Model):
+	uuid = db.StringProperty(default=uuid.uuid4().hex)
+	user = db.ReferenceProperty(UserInfo)
+	suggestion = db.ReferenceProperty(Suggestion)
+	date = db.DateTimeProperty(auto_now_add=True)
+	def __str__(self):
+		return "%s@lunchdiscuss.appspotmail.com" % self.uuid
+
+
