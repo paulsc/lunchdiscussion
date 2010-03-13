@@ -20,7 +20,7 @@ def send_notification(message, suggestion):
 		email.subject = "Lunchdiscussion.com update"
 		email.body = "www.lunchdiscussion.com update\n " + message
 		email.to = "%s <%s>" % (target.nickname, target.email)
-		email.to = "paul <paul167@gmail.com"
+		email.to = "paul <paul167@gmail.com>"
 		reply_to = ReplyTo(user=target, suggestion=suggestion)
 		email.reply_to = str(reply_to)
 		email.send()
