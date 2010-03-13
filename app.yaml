@@ -3,6 +3,9 @@ version: 1
 runtime: python
 api_version: 1
 
+inbound_services:
+- mail
+
 handlers:
 - url: /static
   static_dir: static
@@ -10,6 +13,12 @@ handlers:
 - url: /images
   static_dir: images
 
+- url: /_ah/mail/.+
+  script: email.py
+  login: admin
+
 - url: .*
   script: main.py
   login: required
+
+

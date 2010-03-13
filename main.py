@@ -61,11 +61,11 @@ class SuggestionHandler(CustomHandler):
 		userinfo = UserInfo.current()
 		if new != '':
 			sug = Suggestion(restaurant=db.get(new), author=userinfo)
-			notify_new_suggestion(sug)
 			sug.put()
 			
 			userinfo.lastposted = date.today()
 			userinfo.put()
+			notify_new_suggestion(sug)
 
 		remove = cgi.escape(self.request.get('remove'))
 		if remove != '':
@@ -91,13 +91,13 @@ class SuggestionHandler(CustomHandler):
 	def post(self):
 		text = cgi.escape(self.request.get('text'))
 		suggestion = db.get(cgi.escape(self.request.get('suggestion')))
-		notify_new_message(self.request.get('text'), suggestion)
 		text = text.replace('\n', '<br/>')
 		userinfo = UserInfo.current()
 		comment = Comment(text=text, author=userinfo, suggestion=suggestion)
 		comment.put()
 		userinfo.lastposted = date.today()
 		userinfo.put()
+		notify_new_message(self.request.get('text'), suggestion)
 		self.get()
 
 class ProfileHandler(CustomHandler):
