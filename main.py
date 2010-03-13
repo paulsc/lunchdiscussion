@@ -88,10 +88,8 @@ class SuggestionHandler(CustomHandler):
 	def post(self):
 		text = cgi.escape(self.request.get('text'))
 		suggestion = db.get(cgi.escape(self.request.get('suggestion')))
-		text = text.replace('\n', '<br/>')
 		userinfo = UserInfo.current()
 		Comment.post(text, userinfo, suggestion)
-		notify_new_comment(self.request.get('text'), suggestion)
 		self.get()
 
 class ProfileHandler(CustomHandler):

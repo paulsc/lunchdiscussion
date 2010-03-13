@@ -1,3 +1,4 @@
+import uuid
 import logging, email
 import wsgiref.handlers
 
@@ -21,7 +22,7 @@ def send_notification(message, suggestion):
 		email.body = "www.lunchdiscussion.com update\n " + message
 		email.to = "%s <%s>" % (target.nickname, target.email)
 		email.to = "paul <paul167@gmail.com>"
-		reply_to = ReplyTo(user=target, suggestion=suggestion)
+		reply_to = ReplyTo(user=target, suggestion=suggestion, uuid=uuid.uuid4().hex)
 		email.reply_to = str(reply_to)
 		email.send()
 		reply_to.put()
@@ -59,7 +60,7 @@ class IncomingMailHandler(InboundMailHandler):
 			return i
 
 		empty_line = find_empty_line(lines)
-		comment = "<br/>".join(lines[:empty_line])
+		comment = "\n".join(lines[:empty_line])
 		Comment.post(comment, reply_to.user, reply_to.suggestion)
 		logging.info("Email comment posted from: " + reply_to.user.nickname)
 

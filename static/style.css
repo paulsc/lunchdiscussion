@@ -20,6 +20,13 @@ body {
 	font-size: 14px
 }
 
+.no_suggestions {
+	text-align: center;
+	color: #aaaaaa;
+	padding: 30px;
+	border: 1px solid #dddddd;
+}
+
 .suggestion {
 	margin: 5px;
 	min-width: 400px;

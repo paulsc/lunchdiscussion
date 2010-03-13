@@ -1,5 +1,3 @@
-import uuid
-
 from google.appengine.ext import db
 from google.appengine.api import users
 
@@ -81,10 +79,12 @@ class Comment(db.Model):
 	date = db.DateTimeProperty(auto_now_add=True)
 	@staticmethod
 	def post(text, author, suggestion):
-		comment = Comment(text=text, author=author, suggestion=suggestion)
+		brtext = text.replace('\n', '<br/>')
+		comment = Comment(text=brtext, author=author, suggestion=suggestion)
 		super(Comment, comment).put()
 		author.lastposted = date.today()
 		author.put()
+		notify_new_comment(text, suggestion)
 
 	def put(self): raise Exception('use post() instead')
 
@@ -98,7 +98,7 @@ class RestaurantComment(db.Model):
 		return [ 'very bad', 'bad', 'okay', 'good', 'FTW!!' ][self.rating + 2]
 
 class ReplyTo(db.Model):
-	uuid = db.StringProperty(default=uuid.uuid4().hex)
+	uuid = db.StringProperty()
 	user = db.ReferenceProperty(UserInfo)
 	suggestion = db.ReferenceProperty(Suggestion)
 	date = db.DateTimeProperty(auto_now_add=True)
