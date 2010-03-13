@@ -78,21 +78,3 @@ a:visited {
 	float: left;
 }
 
-#twitter {
-	width: 200px;
-}
-
-.twitter_title {
-	font-size: 16px;
-	font-weight: bold;
-	margin: 5px;
-}
-
-.twitter_status {
-	font-size: 12px;
-	margin: 5px;
-}
-
-.twitter_status .created_at {
-	font-size: 9px;
-}
