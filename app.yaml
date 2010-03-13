@@ -17,6 +17,9 @@ handlers:
   script: email.py
   login: admin
 
+- url: /cron/.+
+  script: cron.py
+
 - url: .*
   script: main.py
   login: required
