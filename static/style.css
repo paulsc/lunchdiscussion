@@ -8,6 +8,18 @@ body {
 	margin-right: auto;
 }
 
+#discussion {
+	padding-top: 10px;
+}
+
+#notification {
+	text-align: center;
+	background-color: #fff384;
+	padding: 5px;
+	margin: 5px;
+	font-size: 14px
+}
+
 .suggestion {
 	margin: 5px;
 	min-width: 400px;

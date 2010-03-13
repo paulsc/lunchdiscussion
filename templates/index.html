@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block onload %}{% if ask_to_rate %}showRatingPopup(){% endif %}{% endblock %}
+{% block onload %}{% endblock %}
 
 {% block content %}
 
@@ -50,24 +50,28 @@
 						{% endfor %}					
 				</tr></table>	
 			</div>
-			<div class="clear"/> <br/><br/> 
+
+			<div id="notification">
+				{% if ask_to_rate %}
+					<a href="#" onclick="showRatingPopup()">Did you go to lunch yesterday? Click here to rate!</a>
+				{% endif %}
+			</div>
+
+			<div id="discussion" class="clear"/> 
 				
-				<table>
-					<tr><td width="100%" valign="top"> 
-							<div id="suggestions">
-								{% include "suggestions.html" %}	
-							</div> <br/>
+				<div id="suggestions">
+					{% include "suggestions.html" %}	
+				</div> <br/>
 
-							<span id="restaurants">
-								{% include "restaurants.html" %}	
-							</span>
+				<span id="restaurants">
+					{% include "restaurants.html" %}	
+				</span>
 				
-					<input type="text" id="restaurant_name" />
-					<input type="button" value="add" onclick="javascript:addRestaurant()" />
+				<input type="text" id="restaurant_name" />
+				<input type="button" value="add" onclick="javascript:addRestaurant()" />
 
-					</td><td valign="top">
+			</div>
 
-			</td></tr></table>
 
 		</div>
 
