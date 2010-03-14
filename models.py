@@ -106,3 +106,5 @@ class ReplyTo(db.Model):
 		return "%s@lunchdiscuss.appspotmail.com" % self.uuid
 
 
+# circular dependency here, maybe that should be fixed
+from emailhandler import notify_new_comment
