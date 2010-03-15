@@ -10,10 +10,10 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 from models import ReplyTo, UserInfo, Comment
 
-def send_notification(message, suggestion):
-	currentuser = users.get_current_user()
+# following 3 functions need cleaning up
+def send_notification(message, suggestion, exclude_user):
 	def f(i): 
-		return i.nickname != "" and i.user != currentuser and i.email != 'none'
+		return i.nickname != "" and i.user != exclude_user and i.email != 'none'
 	targets = filter(f, UserInfo.get_active_crew())
 
 	def send_to_target(target):
@@ -21,7 +21,6 @@ def send_notification(message, suggestion):
 		email.subject = "Lunchdiscussion.com update"
 		email.body = "www.lunchdiscussion.com update\n " + message
 		email.to = "%s <%s>" % (target.nickname, target.email)
-		email.to = "paul <paul167@gmail.com>"
 		reply_to = ReplyTo(user=target, suggestion=suggestion, uuid=uuid.uuid4().hex)
 		email.reply_to = str(reply_to)
 		email.send()
@@ -29,15 +28,15 @@ def send_notification(message, suggestion):
 	
 	map(send_to_target, targets)
 	
-def notify_new_comment(comment, suggestion):
-	body = "On '%s'\n%s: %s" % (suggestion.restaurant.name, 
-								UserInfo.current().nickname, comment)
-	send_notification(body, suggestion)
+def notify_new_comment(text, comment):
+	body = "On '%s'\n%s: %s" % (comment.suggestion.restaurant.name, 
+								comment.author.nickname, text)
+	send_notification(body, comment.suggestion, comment.author.user)
 
 def notify_new_suggestion(suggestion):
 	body = "%s suggests going to '%s' for lunch." % \
-			(UserInfo.current().nickname, suggestion.restaurant.name)
-	send_notification(body, suggestion)		
+			(suggestion.author.nickname, suggestion.restaurant.name)
+	send_notification(body, suggestion, suggestion.author.user)		
 	
 
 class IncomingMailHandler(InboundMailHandler):

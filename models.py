@@ -84,7 +84,7 @@ class Comment(db.Model):
 		super(Comment, comment).put()
 		author.lastposted = date.today()
 		author.put()
-		notify_new_comment(text, suggestion)
+		notify_new_comment(text, comment)
 
 	def put(self): raise Exception('use post() instead')
 

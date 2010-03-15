@@ -15,7 +15,6 @@ handlers:
 
 - url: /_ah/mail/.+
   script: emailhandler.py
-  login: admin
 
 - url: /cron/.+
   script: cron.py
