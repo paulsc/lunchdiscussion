@@ -7,6 +7,7 @@ function addRestaurant() {
 }
 
 function newSuggestion(restaurantKey) {
+	$('suggestions').innerHTML = "<div class='no_suggestions'><img src='images/spinner.gif' alt='spinner'/></div>";
 	new Ajax.Updater('suggestions', 
 			'/suggestions?add=' + restaurantKey,
 			{ method: 'get' });
