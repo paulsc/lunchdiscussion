@@ -1,5 +1,5 @@
 application: lunchdiscuss
-version: prod
+version: cirdep-fix 
 runtime: python
 api_version: 1
 

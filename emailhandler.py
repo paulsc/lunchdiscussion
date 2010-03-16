@@ -27,9 +27,10 @@ class IncomingMailHandler(InboundMailHandler):
 			for i in range(len(lines)):
 				if lines[i] == "":
 					break	
-			return i
+			return len(lines)
 
 		empty_line = find_empty_line(lines)
+		logging.info(empty_line)
 		comment = "\n".join(lines[:empty_line])
 		post_comment(comment, reply_to.user, reply_to.suggestion)
 		logging.info("Email comment posted from: " + reply_to.user.nickname)
