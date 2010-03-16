@@ -77,16 +77,6 @@ class Comment(db.Model):
 	text = db.TextProperty()
 	author = db.ReferenceProperty(UserInfo)
 	date = db.DateTimeProperty(auto_now_add=True)
-	@staticmethod
-	def post(text, author, suggestion):
-		brtext = text.replace('\n', '<br/>')
-		comment = Comment(text=brtext, author=author, suggestion=suggestion)
-		super(Comment, comment).put()
-		author.lastposted = date.today()
-		author.put()
-		notify_new_comment(text, comment)
-
-	def put(self): raise Exception('use post() instead')
 
 class RestaurantComment(db.Model):
 	restaurant = db.ReferenceProperty(Restaurant, collection_name='comments')
@@ -105,6 +95,3 @@ class ReplyTo(db.Model):
 	def __str__(self):
 		return "%s@lunchdiscuss.appspotmail.com" % self.uuid
 
-
-# circular dependency here, maybe that should be fixed
-from emailhandler import notify_new_comment

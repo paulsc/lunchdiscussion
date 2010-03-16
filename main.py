@@ -20,7 +20,6 @@ from tzinfo import Eastern
 
 from models import *
 from utils import *
-from emailhandler import *
 
 class MainHandler(CustomHandler):
 	def get(self):
@@ -89,7 +88,7 @@ class SuggestionHandler(CustomHandler):
 		text = cgi.escape(self.request.get('text'))
 		suggestion = db.get(cgi.escape(self.request.get('suggestion')))
 		userinfo = UserInfo.current()
-		Comment.post(text, userinfo, suggestion)
+		post_comment(text, userinfo, suggestion)
 		self.get()
 
 class ProfileHandler(CustomHandler):
