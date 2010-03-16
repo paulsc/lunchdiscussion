@@ -48,6 +48,7 @@ def send_notification(message, suggestion, exclude_user):
 	def f(i): 
 		return i.nickname != "" and i.user != exclude_user and i.email != 'none'
 	targets = filter(f, UserInfo.get_active_crew())
+	#targets = UserInfo.gql('WHERE nickname = :1', 'paul')
 
 	def send_to_target(target):
 		email = mail.EmailMessage(sender="discuss@lunchdiscussion.com")
