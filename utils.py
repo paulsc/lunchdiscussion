@@ -53,7 +53,7 @@ def send_notification(message, suggestion, exclude_user):
 	def send_to_target(target):
 		email = mail.EmailMessage(sender="discuss@lunchdiscussion.com")
 		email.subject = "Lunchdiscussion.com update"
-		email.body = "www.lunchdiscussion.com update\n " + message
+		email.body = "www.lunchdiscussion.com update\n" + message
 		email.to = "%s <%s>" % (target.nickname, target.email)
 		reply_to = ReplyTo(user=target, suggestion=suggestion, uuid=uuid.uuid4().hex)
 		email.reply_to = str(reply_to)
