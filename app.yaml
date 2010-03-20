@@ -1,5 +1,5 @@
 application: lunchdiscuss
-version: cirdep-fix 
+version: unicode-fix
 runtime: python
 api_version: 1
 
@@ -14,6 +14,9 @@ handlers:
   static_dir: images
 
 - url: /_ah/mail/.+
+  script: emailhandler.py
+
+- url: /emailtask
   script: emailhandler.py
 
 - url: /cron/.+

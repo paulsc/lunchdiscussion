@@ -14,12 +14,14 @@ from google.appengine.ext.webapp import template
 from google.appengine.api import images
 from google.appengine.ext import webapp
 from google.appengine.api import users
+from google.appengine.api.labs import taskqueue
 
 from datetime import datetime, timedelta, date
 from tzinfo import Eastern
 
 from models import *
 from utils import *
+
 
 class MainHandler(CustomHandler):
 	def get(self):
@@ -61,7 +63,8 @@ class SuggestionHandler(CustomHandler):
 			
 			userinfo.lastposted = date.today()
 			userinfo.put()
-			notify_new_suggestion(sug)
+
+			taskqueue.add(url='/emailtask', params={'suggestion': sug.key()})
 
 		remove = cgi.escape(self.request.get('remove'))
 		if remove != '':

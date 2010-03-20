@@ -1,14 +1,13 @@
 ﻿import os
-import uuid
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
+from google.appengine.api.labs import taskqueue
 
 from datetime import datetime, date, timedelta
 from tzinfo import Eastern
 
 from models import UserInfo, Suggestion, Comment, ReplyTo
-from google.appengine.api import mail
 
 import logging
 
@@ -41,34 +40,5 @@ def post_comment(text, author, suggestion):
 	comment.put()
 	author.lastposted = date.today()
 	author.put()
-	notify_new_comment(text, comment)
+	taskqueue.add(url='/emailtask', params={'comment': comment.key()})
 
-# following 3 functions need cleaning up
-def send_notification(message, suggestion, exclude_user):
-	def f(i): 
-		return i.nickname != "" and i.user != exclude_user and i.email != 'none'
-	targets = filter(f, UserInfo.get_active_crew())
-	#targets = UserInfo.gql('WHERE nickname = :1', 'paul')
-
-	def send_to_target(target):
-		email = mail.EmailMessage(sender="discuss@lunchdiscussion.com")
-		email.subject = "Lunchdiscussion.com update"
-		email.body = "www.lunchdiscussion.com update\n" + message
-		email.to = "%s <%s>" % (target.nickname, target.email)
-		reply_to = ReplyTo(user=target, suggestion=suggestion, uuid=uuid.uuid4().hex)
-		email.reply_to = str(reply_to)
-		email.send()
-		reply_to.put()
-	
-	map(send_to_target, targets)
-	
-def notify_new_comment(text, comment):
-	body = "On '%s'\n%s: %s" % (comment.suggestion.restaurant.name, 
-								comment.author.nickname, text)
-	send_notification(body, comment.suggestion, comment.author.user)
-
-def notify_new_suggestion(suggestion):
-	body = "%s suggests going to '%s' for lunch." % \
-			(suggestion.author.nickname, suggestion.restaurant.name)
-	send_notification(body, suggestion, suggestion.author.user)		
-	
