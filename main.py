@@ -14,7 +14,6 @@ from google.appengine.ext.webapp import template
 from google.appengine.api import images
 from google.appengine.ext import webapp
 from google.appengine.api import users
-from google.appengine.api.labs import taskqueue
 
 from datetime import datetime, timedelta, date
 from tzinfo import Eastern
@@ -60,11 +59,9 @@ class SuggestionHandler(CustomHandler):
 		if new != '':
 			sug = Suggestion(restaurant=db.get(new), author=userinfo)
 			sug.put()
-			
 			userinfo.lastposted = date.today()
 			userinfo.put()
-
-			taskqueue.add(url='/emailtask', params={'suggestion': sug.key()})
+			notify_suggestion(sug)
 
 		remove = cgi.escape(self.request.get('remove'))
 		if remove != '':

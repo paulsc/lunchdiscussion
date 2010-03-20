@@ -37,14 +37,14 @@ class IncomingMailHandler(InboundMailHandler):
 		post_comment(comment, reply_to.user, reply_to.suggestion)
 		logging.info("Email comment posted from: " + reply_to.user.nickname)
 
-# following 3 functions need cleaning up
-def send_notification(message, suggestion, exclude_user):
-	def f(i): 
-		return i.nickname != "" and i.user != exclude_user and i.email != 'none'
-	targets = filter(f, UserInfo.get_active_crew())
-	#targets = UserInfo.gql('WHERE nickname = :1', 'paul')
 
-	def send_to_target(target):
+class EmailTaskHandler(webapp.RequestHandler):
+	def post(self):
+		suggestion = db.get(self.request.get("suggestion"))
+		target = db.get(self.request.get("target"))
+		message = self.request.get("message")
+
+		logging.info("email task: %s %s %s" % (str(suggestion), str(target), message))
 		email = mail.EmailMessage(sender="discuss@lunchdiscussion.com")
 		email.subject = "Lunchdiscussion.com update"
 		email.body = "www.lunchdiscussion.com update\n" + message
@@ -54,35 +54,6 @@ def send_notification(message, suggestion, exclude_user):
 		email.send()
 		reply_to.put()
 	
-	map(send_to_target, targets)
-	
-def notify_new_comment(comment):
-	text = comment.text.replace("<br/>", "\n")
-	body = "On '%s'\n%s: %s" % (comment.suggestion.restaurant.name, 
-								comment.author.nickname, text)
-	send_notification(body, comment.suggestion, comment.author.user)
-
-def notify_new_suggestion(suggestion):
-	body = "%s suggests going to '%s' for lunch." % \
-			(suggestion.author.nickname, suggestion.restaurant.name)
-	send_notification(body, suggestion, suggestion.author.user)		
-	
-
-class EmailTaskHandler(webapp.RequestHandler):
-	def post(self):
-		
-		suggestion = self.request.get("suggestion")
-		if suggestion != "":
-			logging.info("emailtask, suggestion: " + str(suggestion))
-			notify_new_suggestion(db.get(suggestion))
-			return
-
-		comment = self.request.get("comment")
-		if comment != "":
-			logging.info("emailtask, comment: " + str(comment))
-			notify_new_comment(db.get(comment))
-			return
-
 
 def main():
 	application = webapp.WSGIApplication([

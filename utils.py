@@ -40,5 +40,27 @@ def post_comment(text, author, suggestion):
 	comment.put()
 	author.lastposted = date.today()
 	author.put()
-	taskqueue.add(url='/emailtask', params={'comment': comment.key()})
+	notify_comment(text, comment)
 
+# following 3 functions need cleaning up
+def send_notification(message, suggestion, exclude_user):
+	def f(i): 
+		return i.nickname != "" and i.user != exclude_user and i.email != 'none'
+	targets = filter(f, UserInfo.get_active_crew())
+	#targets = UserInfo.gql('WHERE nickname = :1', 'paul')
+	
+	params = { 'suggestion': suggestion.key(), 'message': message }
+	for target in targets:
+		params['target'] = target.key()
+		taskqueue.add(url='/emailtask', params=params)
+
+def notify_comment(text, comment):
+	body = "On '%s'\n%s: %s" % (comment.suggestion.restaurant.name, 
+								comment.author.nickname, text)
+	send_notification(body, comment.suggestion, comment.author.user)
+
+def notify_suggestion(suggestion):
+	body = "%s suggests going to '%s' for lunch." % \
+			(suggestion.author.nickname, suggestion.restaurant.name)
+	send_notification(body, suggestion, suggestion.author.user)		
+	
