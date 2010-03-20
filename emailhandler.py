@@ -28,11 +28,10 @@ class IncomingMailHandler(InboundMailHandler):
 		def find_empty_line(lines):
 			for i in range(len(lines)):
 				if lines[i] == "":
-					break	
+					return i			
 			return len(lines)
 
 		empty_line = find_empty_line(lines)
-		logging.info(empty_line)
 		comment = "\n".join(lines[:empty_line])
 		post_comment(comment, reply_to.user, reply_to.suggestion)
 		logging.info("Email comment posted from: " + reply_to.user.nickname)
@@ -44,11 +43,12 @@ class EmailTaskHandler(webapp.RequestHandler):
 		target = db.get(self.request.get("target"))
 		message = self.request.get("message")
 
-		logging.info("email task: %s %s %s" % (str(suggestion), str(target), message))
+		logging.info("email task to: %s \"%s\"" % (str(target.email), message))
 		email = mail.EmailMessage(sender="discuss@lunchdiscussion.com")
 		email.subject = "Lunchdiscussion.com update"
 		email.body = "www.lunchdiscussion.com update\n" + message
 		email.to = "%s <%s>" % (target.nickname, target.email)
+		#email.to = "paul <paul167@gmail.com>"
 		reply_to = ReplyTo(user=target, suggestion=suggestion, uuid=uuid.uuid4().hex)
 		email.reply_to = str(reply_to)
 		email.send()
