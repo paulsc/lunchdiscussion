@@ -3,7 +3,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext import db
 
 from datetime import datetime, timedelta
-from ldmodels import ReplyTo
+from models import ReplyTo
 
 class DailyCronHandler(webapp.RequestHandler):
 	def get(self):

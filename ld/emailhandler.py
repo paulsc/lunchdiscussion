@@ -6,8 +6,8 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp.mail_handlers import InboundMailHandler 
 from google.appengine.api import mail
 
-from ldmodels import ReplyTo
-from ldutils import post_comment
+from models import ReplyTo
+from utils import post_comment
 
 class IncomingMailHandler(InboundMailHandler):
 	def receive(self, mail):

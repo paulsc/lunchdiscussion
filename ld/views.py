@@ -7,9 +7,10 @@ from google.appengine.api import images
 
 from datetime import datetime, date, timedelta
 
-from ldutils import CustomHandler, incr, ask_to_rate, is_morning
-from ldutils import notify_suggestion, post_comment
-from ldmodels import UserInfo, Suggestion, Restaurant, RestaurantComment
+from utils import CustomHandler, incr, ask_to_rate, is_morning,\
+    notify_suggestion, post_comment
+
+from models import UserInfo, Suggestion, Restaurant, RestaurantComment
 
 class MainHandler(CustomHandler):
 	def get(self):
