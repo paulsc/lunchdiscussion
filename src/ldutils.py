@@ -7,7 +7,7 @@ from google.appengine.api.labs import taskqueue
 from datetime import datetime, date, timedelta
 from timezone import Eastern
 
-from models3 import UserInfo, Suggestion, Comment
+from ldmodels import UserInfo, Suggestion, Comment
 
 class CustomHandler(webapp.RequestHandler):
 	def render(self, template_name, context):

@@ -11,7 +11,7 @@ from datetime import datetime, date, timedelta
 
 from ldutils import CustomHandler, incr, ask_to_rate, is_morning
 from ldutils import notify_suggestion, post_comment
-from models3 import UserInfo, Suggestion, Restaurant, RestaurantComment
+from ldmodels import UserInfo, Suggestion, Restaurant, RestaurantComment
 
 class MainHandler(CustomHandler):
 	def get(self):
