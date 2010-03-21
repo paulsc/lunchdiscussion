@@ -1,26 +1,17 @@
-import os
-import sys
 import cgi
-import time
-import base64
-import urllib2
 import logging
 import wsgiref.handlers
 
-from urllib2 import URLError
-from django.utils import simplejson as json
-from google.appengine.api.urlfetch import fetch
-from google.appengine.ext.webapp import template
+from google.appengine.ext import db
+from google.appengine.api import users
 from google.appengine.api import images
 from google.appengine.ext import webapp
-from google.appengine.api import users
 
-from datetime import datetime, timedelta, date
-from tzinfo import Eastern
+from datetime import datetime, date, timedelta
 
-from models import *
-from utils import *
-
+from ldutils import CustomHandler, incr, ask_to_rate, is_morning
+from ldutils import notify_suggestion, post_comment
+from models import UserInfo, Suggestion, Restaurant, RestaurantComment
 
 class MainHandler(CustomHandler):
 	def get(self):
@@ -77,7 +68,7 @@ class SuggestionHandler(CustomHandler):
 			if comment.author.user == userinfo.user:
 				comment.delete()
 			else:
-				logging.eror('user: %s tried to delete comment he doesn\'t own' % userinfo.nickname)
+				logging.error('user: %s tried to delete comment he doesn\'t own' % userinfo.nickname)
 
 		context = { 'suggestions': Suggestion.get_todays(), 
 					'userinfo': userinfo }
@@ -242,7 +233,6 @@ class StatsHandler(CustomHandler):
 		self.render('stats', context)
 
 def main():
-	userinfo = UserInfo.current()
 	application = webapp.WSGIApplication([('/', MainHandler),
 										  ('/profile', ProfileHandler),
 										  ('/restaurant-info', RestaurantInfoHandler),

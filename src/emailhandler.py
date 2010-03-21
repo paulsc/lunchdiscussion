@@ -3,17 +3,15 @@ import logging
 import wsgiref.handlers
 
 from google.appengine.ext import db
-from google.appengine.api import users
 from google.appengine.ext import webapp 
 from google.appengine.ext.webapp.mail_handlers import InboundMailHandler 
-from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import mail
 
-from models import ReplyTo, UserInfo
-from utils import post_comment
+from models import ReplyTo
+from ldutils import post_comment
 
 class IncomingMailHandler(InboundMailHandler):
-    def receive(self, mail):
+	def receive(self, mail):
 		uuid = mail.to[:mail.to.index('@')]
 		reply_to = ReplyTo.gql('WHERE uuid = :1', uuid).get()
 

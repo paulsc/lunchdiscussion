@@ -1,7 +1,6 @@
 import logging
 import wsgiref.handlers
 from google.appengine.ext import webapp 
-from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext import db
 
 from datetime import datetime, timedelta

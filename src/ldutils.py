@@ -1,4 +1,4 @@
-﻿import os
+import os
 
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
@@ -7,9 +7,7 @@ from google.appengine.api.labs import taskqueue
 from datetime import datetime, date, timedelta
 from tzinfo import Eastern
 
-from models import UserInfo, Suggestion, Comment, ReplyTo
-
-import logging
+from models import UserInfo, Suggestion, Comment
 
 class CustomHandler(webapp.RequestHandler):
 	def render(self, template_name, context):
