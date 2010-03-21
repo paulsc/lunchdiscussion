@@ -1,13 +1,12 @@
 import uuid
 import logging
-import wsgiref.handlers
 
 from google.appengine.ext import db
 from google.appengine.ext import webapp 
 from google.appengine.ext.webapp.mail_handlers import InboundMailHandler 
 from google.appengine.api import mail
 
-from models import ReplyTo
+from ldmodels import ReplyTo
 from ldutils import post_comment
 
 class IncomingMailHandler(InboundMailHandler):
@@ -51,13 +50,3 @@ class EmailTaskHandler(webapp.RequestHandler):
 		email.reply_to = str(reply_to)
 		email.send()
 		reply_to.put()
-	
-
-def main():
-	application = webapp.WSGIApplication([
-			IncomingMailHandler.mapping(),
-			("/emailtask", EmailTaskHandler)], debug=True)
-	wsgiref.handlers.CGIHandler().run(application)
-
-if __name__ == '__main__':
-	main()

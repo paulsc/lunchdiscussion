@@ -13,15 +13,6 @@ handlers:
 - url: /images
   static_dir: images
 
-- url: /_ah/mail/.+
-  script: ld/emailhandler.py
-
-- url: /emailtask
-  script: ld/emailhandler.py
-
-- url: /cron/.+
-  script: ld/cron.py
-
 - url: .*
   script: main.py
   login: required

@@ -1,8 +1,11 @@
 import wsgiref.handlers
 from google.appengine.ext import webapp
+
 from ld.views import MainHandler, ProfileHandler, RestaurantHandler,\
 	RestaurantInfoHandler, SuggestionHandler, AvatarHandler, RatingHandler,\
 	StatsHandler
+from ld.emailhandler import EmailTaskHandler, IncomingMailHandler
+from ld.cron import DailyCronHandler
 
 def main():
 	application = webapp.WSGIApplication([('/', MainHandler),
@@ -12,7 +15,11 @@ def main():
 										  ('/suggestions', SuggestionHandler),
 										  ('/avatar', AvatarHandler),
 										  ('/rate', RatingHandler),
-										  ('/stats', StatsHandler)],
+										  ('/stats', StatsHandler),
+										  ("/emailtask", EmailTaskHandler),
+										  IncomingMailHandler.mapping(),
+										  ('/cron/daily', DailyCronHandler),
+										  ],
                                        debug=True)
 	wsgiref.handlers.CGIHandler().run(application)
 		
