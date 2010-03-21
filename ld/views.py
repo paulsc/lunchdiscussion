@@ -1,11 +1,9 @@
 import cgi
 import logging
-import wsgiref.handlers
 
 from google.appengine.ext import db
 from google.appengine.api import users
 from google.appengine.api import images
-from google.appengine.ext import webapp
 
 from datetime import datetime, date, timedelta
 
@@ -229,18 +227,3 @@ class StatsHandler(CustomHandler):
 			}
 							
 		self.render('stats', context)
-
-def main():
-	application = webapp.WSGIApplication([('/', MainHandler),
-										  ('/profile', ProfileHandler),
-										  ('/restaurant-info', RestaurantInfoHandler),
-										  ('/restaurants', RestaurantHandler),
-										  ('/suggestions', SuggestionHandler),
-										  ('/avatar', AvatarHandler),
-										  ('/rate', RatingHandler),
-										  ('/stats', StatsHandler)],
-                                       debug=True)
-	wsgiref.handlers.CGIHandler().run(application)
-
-if __name__ == '__main__':
-	main()
