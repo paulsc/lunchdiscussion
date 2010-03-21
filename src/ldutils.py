@@ -8,11 +8,13 @@ from datetime import datetime, date, timedelta
 from timezone import Eastern
 
 from ldmodels import UserInfo, Suggestion, Comment
+import logging
 
 class CustomHandler(webapp.RequestHandler):
 	def render(self, template_name, context):
-		path = os.path.join(os.path.dirname(__file__), 
+		path = os.path.join(os.path.dirname(__file__), '..',
 				'templates', '%s.html' % template_name) 
+		logging.info('template path:' + path)
 		self.response.out.write(template.render(path, context))
 
 def incr(var, val = 1): return 1 if var == None else var + val
