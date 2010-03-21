@@ -15,3 +15,6 @@ def main():
 										  ('/stats', StatsHandler)],
                                        debug=True)
 	wsgiref.handlers.CGIHandler().run(application)
+		
+if __name__ == "__main__":
+	main()
