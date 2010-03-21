@@ -5,9 +5,9 @@ from google.appengine.ext.webapp import template
 from google.appengine.api.labs import taskqueue
 
 from datetime import datetime, date, timedelta
-from tzinfo import Eastern
+from timezone import Eastern
 
-from models import UserInfo, Suggestion, Comment
+from models3 import UserInfo, Suggestion, Comment
 
 class CustomHandler(webapp.RequestHandler):
 	def render(self, template_name, context):

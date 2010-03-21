@@ -11,7 +11,7 @@ from datetime import datetime, date, timedelta
 
 from ldutils import CustomHandler, incr, ask_to_rate, is_morning
 from ldutils import notify_suggestion, post_comment
-from models import UserInfo, Suggestion, Restaurant, RestaurantComment
+from models3 import UserInfo, Suggestion, Restaurant, RestaurantComment
 
 class MainHandler(CustomHandler):
 	def get(self):
@@ -20,9 +20,7 @@ class MainHandler(CustomHandler):
 			self.redirect('/profile')
 			return
 
-		now = datetime.now()
-		context = { 'now': now.strftime("%A %d/%m/%Y").lower(),
-					'logout_url': users.create_logout_url('/'),
+		context = { 'logout_url': users.create_logout_url('/'),
 					'userinfo': userinfo,
 					'ask_to_rate' : ask_to_rate(),
 					'active_crew': UserInfo.get_active_crew(),
