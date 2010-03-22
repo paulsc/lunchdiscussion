@@ -44,7 +44,10 @@ class SignupHandler(CustomHandler):
 		userinfo.group = group
 		userinfo.put()
 		
-		
+		# work on proper template structure first
+		if userinfo.nickname == "":
+			self.redirect('/profile')
+			return
 		
 		self.response.out.write('ok')
 		

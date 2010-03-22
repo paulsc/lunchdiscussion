@@ -1,4 +1,4 @@
-﻿
+
 function addRestaurant() {
 	new Ajax.Updater('restaurants', 
 			'/restaurants?add=' + $F('restaurant_name'),
@@ -84,7 +84,4 @@ function $RF(el, radioGroup) {
 		function(re) {return re.checked;}
 	);
 	return (checked) ? $F(checked) : null;
-}		
-			
-
-
+}
