@@ -6,9 +6,11 @@ from ld.views import MainHandler, ProfileHandler, RestaurantHandler,\
 	StatsHandler
 from ld.emailhandler import EmailTaskHandler, IncomingMailHandler
 from ld.cron import DailyCronHandler
+from ld.signup import SignupHandler
 
 def main():
 	application = webapp.WSGIApplication([('/', MainHandler),
+										  ('/signup', SignupHandler),
 										  ('/profile', ProfileHandler),
 										  ('/restaurant-info', RestaurantInfoHandler),
 										  ('/restaurants', RestaurantHandler),

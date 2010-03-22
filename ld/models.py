@@ -7,10 +7,6 @@ from datetime import datetime
 
 DEAD_LIMIT = 7
 
-class Group(db.Model):
-	name = db.StringProperty()
-	address = db.TextProperty()
-
 class Restaurant(db.Model):
 	name = db.StringProperty()
 	karma = db.IntegerProperty()
@@ -27,6 +23,7 @@ class Restaurant(db.Model):
 
 class UserInfo(db.Model):
 	user = db.UserProperty(auto_current_user_add=True)
+	group = db.ReferenceProperty(collection_name='users')	
 	email = db.EmailProperty()
 	nickname = db.StringProperty()
 	avatar = db.BlobProperty()
@@ -48,10 +45,18 @@ class UserInfo(db.Model):
 	def get_dead_crew():
 		one_week_ago = datetime.now() - timedelta(DEAD_LIMIT)
 		return UserInfo.gql('WHERE lastposted < DATE(:1, :2, :3)', 
-						one_week_ago.year, one_week_ago.month, one_week_ago.day)			
+						one_week_ago.year, one_week_ago.month, one_week_ago.day)
+		
+class Group(db.Model):
+	shortname = db.StringProperty()
+	fullname = db.StringProperty()
+	#address = db.TextProperty()
+	creator = db.ReferenceProperty(UserInfo)
+	created = db.DateProperty(auto_now_add=True)			
 
 class Suggestion(db.Model):
 	author = db.ReferenceProperty(UserInfo)
+	group = db.ReferenceProperty(Group, collection_name='suggestions')
 	restaurant = db.ReferenceProperty(Restaurant)
 	date = db.DateProperty(auto_now_add=True)
 

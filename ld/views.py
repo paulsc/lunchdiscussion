@@ -16,6 +16,10 @@ class MainHandler(CustomHandler):
 	def get(self):
 		userinfo = UserInfo.current()
 		if userinfo == None:
+			self.redirect('/signup')
+			return
+
+		if userinfo.nickname == "":
 			self.redirect('/profile')
 			return
 
