@@ -11,11 +11,12 @@ from utils import CustomHandler, incr, ask_to_rate, is_morning,\
     notify_suggestion, post_comment
 
 from models import UserInfo, Suggestion, Restaurant, RestaurantComment
+from ld.models import Group
 
-class MainHandler(CustomHandler):
+class IndexHandler(CustomHandler):
 	def get(self):
 		userinfo = UserInfo.current()
-		if userinfo == None:
+		if userinfo == None or userinfo.group == None:
 			self.redirect('/signup')
 			return
 
@@ -23,6 +24,25 @@ class MainHandler(CustomHandler):
 			self.redirect('/profile')
 			return
 
+		self.render('index')
+		
+class HomeHandler(CustomHandler):
+	def get(self):
+		userinfo = UserInfo.current()
+		if userinfo == None or userinfo.group == None:
+			self.redirect('/')
+			return
+		
+		group_shortname = self.request.path.strip('/')
+		group = Group.gql('WHERE shortname = :1', group_shortname)
+		if group == None:
+			self.redirect('/')
+			return
+		
+		if userinfo.group != group:
+			self.render('index', { 'notification': "not a member of this group" })
+			return
+		
 		context = { 'logout_url': users.create_logout_url('/'),
 					'userinfo': userinfo,
 					'ask_to_rate' : ask_to_rate(),
@@ -32,7 +52,8 @@ class MainHandler(CustomHandler):
 					'restaurants': Restaurant.all().order('name'),
 					}
 
-		self.render('index', context)
+		self.render('home', context)		
+		
 
 class RestaurantHandler(CustomHandler):
 	def get(self):

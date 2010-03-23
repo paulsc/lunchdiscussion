@@ -1,23 +1,28 @@
-from ld.utils import CustomHandler
+from ld.utils import CustomHandler, is_empty
 import logging
 import cgi
-from ld.models import Group, UserInfo
+from ld.models import Group, UserInfo, GROUP_SHORTNAME_REGEXP
 from google.appengine.api import users
+import re
 
 class SignupHandler(CustomHandler):
 	def get(self):
-		context = {}
-		self.render('signup', context)
+		userinfo = UserInfo.current()
+		if userinfo.group != None:
+			self.redirect("/" + userinfo.group.shortname)
+		
+		self.render('signup')
 		
 	def error(self, message):
-		context = { 'error_message': message }
-		self.render('error', context)
+		context = { 'notification': message }
+		self.render('signup', context)
 		
 	def post(self):
 		group_shortname = cgi.escape(self.request.get('group_shortname'))
 		
-		if group_shortname == "":
-			self.error("empty group name")
+		if re.match(GROUP_SHORTNAME_REGEXP, group_shortname) == None:
+			self.error("groups short name has to be alphanumeric with "
+					   "underscores and at least 3 characters long")
 			return
 		
 		group = Group.gql("WHERE shortname=:1", group_shortname).get()
@@ -44,10 +49,8 @@ class SignupHandler(CustomHandler):
 		userinfo.group = group
 		userinfo.put()
 		
-		# work on proper template structure first
-		if userinfo.nickname == "":
-			self.redirect('/profile')
+		if is_empty(userinfo.nickname):
+			self.render('edit_profile')
 			return
 		
-		self.response.out.write('ok')
-		
+		self.redirect("/")

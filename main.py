@@ -1,15 +1,16 @@
 import wsgiref.handlers
 from google.appengine.ext import webapp
 
-from ld.views import MainHandler, ProfileHandler, RestaurantHandler,\
+from ld.views import IndexHandler, ProfileHandler, RestaurantHandler,\
 	RestaurantInfoHandler, SuggestionHandler, AvatarHandler, RatingHandler,\
-	StatsHandler
+	StatsHandler, HomeHandler
 from ld.emailhandler import EmailTaskHandler, IncomingMailHandler
 from ld.cron import DailyCronHandler
 from ld.signup import SignupHandler
+from ld.models import GROUP_SHORTNAME_REGEXP
 
 def main():
-	application = webapp.WSGIApplication([('/', MainHandler),
+	application = webapp.WSGIApplication([('/', IndexHandler),
 										  ('/signup', SignupHandler),
 										  ('/profile', ProfileHandler),
 										  ('/restaurant-info', RestaurantInfoHandler),
@@ -21,6 +22,7 @@ def main():
 										  ("/emailtask", EmailTaskHandler),
 										  IncomingMailHandler.mapping(),
 										  ('/cron/daily', DailyCronHandler),
+										  ('/%s/?' % GROUP_SHORTNAME_REGEXP, HomeHandler)
 										  ],
                                        debug=True)
 	wsgiref.handlers.CGIHandler().run(application)

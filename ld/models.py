@@ -47,6 +47,7 @@ class UserInfo(db.Model):
 		return UserInfo.gql('WHERE lastposted < DATE(:1, :2, :3)', 
 						one_week_ago.year, one_week_ago.month, one_week_ago.day)
 		
+GROUP_SHORTNAME_REGEXP = "\w{3,}"
 class Group(db.Model):
 	shortname = db.StringProperty()
 	fullname = db.StringProperty()

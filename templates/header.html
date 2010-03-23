@@ -8,7 +8,6 @@
 				<small>
 					{% block extramenu %}{% endblock %}	
 					{% if userinfo %}
-						<a href="/profile">{{ userinfo.nickname }}</a> |
 					{% endif %} 
 					{% if logout_url %}
 						<a href="{{ logout_url }}">logout</a>

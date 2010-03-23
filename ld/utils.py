@@ -10,7 +10,7 @@ from timezone import Eastern
 from models import UserInfo, Suggestion, Comment
 
 class CustomHandler(webapp.RequestHandler):
-	def render(self, template_name, context):
+	def render(self, template_name, context = None):
 		path = os.path.join(os.path.dirname(__file__), '..',
 				'templates', '%s.html' % template_name) 
 		self.response.out.write(template.render(path, context))
@@ -20,6 +20,8 @@ def incr(var, val = 1): return 1 if var == None else var + val
 def is_morning():
 	now = datetime.now(Eastern)
 	return now.hour < 14
+	
+def is_empty(str): return str == "" or str == None	
 	
 def ask_to_rate():
 	today = date.today()

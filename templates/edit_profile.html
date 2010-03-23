@@ -1,6 +1,6 @@
-﻿{% extends "base.html" %}
+{% extends "header.html" %}
 
-{% block content %}
+{% block main %}
 
 		<center>
 			<h2>profile: {{ user.email }}</h2>
@@ -21,6 +21,7 @@
 				{% if not userinfo %}
 					<input type="hidden" name="first_login" value="true" />
 				{% endif %}
+				
 				<table>
 					<tr>
 						<td align="right">nickname:
