@@ -24,7 +24,11 @@ class IndexHandler(CustomHandler):
 			self.redirect('/profile')
 			return
 
-		self.render('index')
+		if userinfo.group == None:
+			self.redirect('/signup')
+			return
+
+		self.redirect('/' + userinfo.group.shortname)
 		
 class HomeHandler(CustomHandler):
 	def get(self):
@@ -34,13 +38,15 @@ class HomeHandler(CustomHandler):
 			return
 		
 		group_shortname = self.request.path.strip('/')
-		group = Group.gql('WHERE shortname = :1', group_shortname)
+		group = Group.gql('WHERE shortname = :1', group_shortname).get()
 		if group == None:
-			self.redirect('/')
+			self.redirect('/signup')
 			return
 		
-		if userinfo.group != group:
-			self.render('index', { 'notification': "not a member of this group" })
+		logging.info(userinfo.group.key())
+		logging.info(group.key())
+		if userinfo.group.key() != group.key():
+			self.render('request_invite', { 'notification': "not a member of this group" })
 			return
 		
 		context = { 'logout_url': users.create_logout_url('/'),
