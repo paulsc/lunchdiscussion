@@ -8,6 +8,8 @@ from datetime import datetime, date, timedelta
 from timezone import Eastern
 
 from models import UserInfo, Suggestion, Comment
+from google.appengine.api import users
+from ld.models import get_active_crew
 
 class TemplateHelperHandler(webapp.RequestHandler):
 	def render(self, template_name, context = None):
@@ -15,24 +17,35 @@ class TemplateHelperHandler(webapp.RequestHandler):
 				'templates', '%s.html' % template_name) 
 		self.response.out.write(template.render(path, context))
 		
-def incr(var, val = 1): return 1 if var == None else var + val
+class LDContextHandler(TemplateHelperHandler):
+	userinfo = UserInfo.gql("WHERE user = :1", users.get_current_user()).get()
+
+	def render(self, template_name, context = {}):
+		context['userinfo'] = self.userinfo
+		context['logout_url'] = users.create_logout_url('/')
+		super(LDContextHandler, self).render(template_name, context)
+		
+
+def incr(var, val = 1): 
+	return 1 if var == None else var + val
+
+def is_empty(str): 
+	return str == "" or str == None	
 
 def is_morning():
 	now = datetime.now(Eastern)
 	return now.hour < 14
 	
-def is_empty(str): return str == "" or str == None	
+def can_vote(userinfo):
+	def can_vote_for_day(day):
+		return (not userinfo.voted_for_day(day)
+			    and Suggestion.get_for_day(day).count() > 0)
 	
-def ask_to_rate():
-	today = date.today()
-	yesterday = today - timedelta(1)
-	userinfo = UserInfo.current()
 	if is_morning():
-		return (not userinfo.voted_for_day(yesterday) 
-				and Suggestion.get_for_day(yesterday).count() > 0)
+		return can_vote_for_day(date.today() - timedelta(1))
 	else:
-		return (not userinfo.voted_for_day(today) 
-				and Suggestion.get_for_day(today).count() > 0)
+		return can_vote_for_day(date.today())
+	
 		
 def post_comment(text, author, suggestion):
 	brtext = text.replace('\n', '<br/>')
@@ -46,7 +59,7 @@ def post_comment(text, author, suggestion):
 def send_notification(message, suggestion, exclude_user):
 	def f(i): 
 		return i.nickname != "" and i.user != exclude_user and i.email != 'none'
-	targets = filter(f, UserInfo.get_active_crew())
+	targets = filter(f, get_active_crew())
 	#targets = UserInfo.gql('WHERE nickname = :1', 'paul')
 	
 	params = { 'suggestion': suggestion.key(), 'message': message }

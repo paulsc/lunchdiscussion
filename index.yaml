@@ -30,3 +30,8 @@ indexes:
   properties:
   - name: restaurant
   - name: date
+
+- kind: UserInfo
+  properties:
+  - name: group
+  - name: lastposted

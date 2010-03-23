@@ -7,33 +7,32 @@ from google.appengine.api import images
 
 from datetime import datetime, date, timedelta
 
-from utils import TemplateHelperHandler, incr, ask_to_rate, is_morning,\
+from utils import TemplateHelperHandler, incr, is_morning,\
     notify_suggestion, post_comment
 
 from models import UserInfo, Suggestion, Restaurant, RestaurantComment
-from ld.models import Group, get_group
+from ld.models import Group, get_active_crew, get_dead_crew
+from ld.utils import LDContextHandler, can_vote
 
-class IndexHandler(TemplateHelperHandler):
+class IndexHandler(LDContextHandler):
 	def get(self):
-		userinfo = UserInfo.current()
-		if userinfo == None or userinfo.group == None:
+		if self.userinfo == None or self.userinfo.group == None:
 			self.redirect('/signup')
 			return
 
-		if userinfo.nickname == "":
+		if self.userinfo.nickname == "":
 			self.redirect('/profile')
 			return
 
-		if userinfo.group == None:
+		if self.userinfo.group == None:
 			self.redirect('/signup')
 			return
 
-		self.redirect('/' + userinfo.group.shortname)
+		self.redirect('/' + self.userinfo.group.shortname)
 		
-class HomeHandler(TemplateHelperHandler):
+class HomeHandler(LDContextHandler):
 	def get(self):
-		userinfo = UserInfo.current()
-		if userinfo == None or userinfo.group == None:
+		if self.userinfo == None or self.userinfo.group == None:
 			self.redirect('/')
 			return
 		
@@ -43,37 +42,32 @@ class HomeHandler(TemplateHelperHandler):
 			self.response.out.write('group not found')
 			return
 		
-		logging.info(userinfo.group.key())
-		logging.info(group.key())
-		if userinfo.group.key() != group.key():
+		if self.userinfo.group.key() != group.key():
 			self.render('request_invite', { 'notification': "not a member of this group" })
 			return
 		
 		context = { 'logout_url': users.create_logout_url('/test'),
-					'userinfo': userinfo,
-					'ask_to_rate' : ask_to_rate(),
-					'active_crew': UserInfo.get_active_crew(),
-					'dead_crew': UserInfo.get_dead_crew(), 
+					'ask_to_rate' : can_vote(self.userinfo),
+					'active_crew': get_active_crew(self.userinfo.group),
+					'dead_crew': get_dead_crew(self.userinfo.group), 
 					'suggestions': Suggestion.get_todays(),
-					'restaurants': Restaurant.gql("WHERE group = :1 ORDER by name", group),
-					}
+					'restaurants': Restaurant.gql("WHERE group = :1 ORDER by name", group) }
 
 		self.render('home', context)		
 		
 
-class RestaurantHandler(TemplateHelperHandler):
+class RestaurantHandler(LDContextHandler):
 	def get(self):
 		name = cgi.escape(self.request.get('add'))
 		name = name.capitalize()
-		group = get_group()
 
 		if name != '':
-			restaurant = Restaurant.gql("WHERE name = :1 AND group = :2", name, group).get()
+			restaurant = Restaurant.gql("WHERE name = :1 AND group = :2", name, self.userinfo.group).get()
 			if restaurant == None:
-				restaurant = Restaurant(name=name, group=group)
+				restaurant = Restaurant(name=name, group=self.userinfo.group)
 				restaurant.put()
 		
-		restaurants = Restaurant.gql("WHERE group = :1 ORDER by name", group)
+		restaurants = Restaurant.gql("WHERE group = :1 ORDER by name", self.userinfo.group)
 		context = { 'restaurants': restaurants }
 		self.render('restaurants', context)
 

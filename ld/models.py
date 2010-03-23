@@ -1,5 +1,4 @@
 from google.appengine.ext import db
-from google.appengine.api import users
 
 from datetime import date
 from datetime import timedelta
@@ -34,19 +33,16 @@ class UserInfo(db.Model):
 	lunchcount = db.IntegerProperty()
 	def voted_for_day(self, day):
 		return self.lastvoted == day
-	@staticmethod
-	def current():
-		return UserInfo.gql("WHERE user = :1", users.get_current_user()).get()
-	@staticmethod
-	def get_active_crew():
-		one_week_ago = datetime.now() - timedelta(DEAD_LIMIT)
-		return UserInfo.gql('WHERE lastposted >= DATE(:1, :2, :3)', 
-					one_week_ago.year, one_week_ago.month, one_week_ago.day)
-	@staticmethod
-	def get_dead_crew():
-		one_week_ago = datetime.now() - timedelta(DEAD_LIMIT)
-		return UserInfo.gql('WHERE lastposted < DATE(:1, :2, :3)', 
-						one_week_ago.year, one_week_ago.month, one_week_ago.day)
+
+def get_active_crew(group):
+	one_week_ago = datetime.now() - timedelta(DEAD_LIMIT)
+	return UserInfo.gql('WHERE lastposted >= DATE(:1, :2, :3) AND group = :4', 
+				one_week_ago.year, one_week_ago.month, one_week_ago.day, group)
+
+def get_dead_crew(group):
+	one_week_ago = datetime.now() - timedelta(DEAD_LIMIT)
+	return UserInfo.gql('WHERE lastposted < DATE(:1, :2, :3) AND group = :4', 
+					one_week_ago.year, one_week_ago.month, one_week_ago.day, group)
 		
 GROUP_SHORTNAME_REGEXP = "\w{3,}"
 class Group(db.Model):
@@ -55,10 +51,6 @@ class Group(db.Model):
 	#address = db.TextProperty()
 	creator = db.ReferenceProperty(UserInfo)
 	created = db.DateProperty(auto_now_add=True)		
-
-def get_group():
-	userinfo = UserInfo.current()
-	return userinfo.group
 
 class Suggestion(db.Model):
 	author = db.ReferenceProperty(UserInfo)
