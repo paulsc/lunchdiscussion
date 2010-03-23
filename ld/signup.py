@@ -1,11 +1,11 @@
-from ld.utils import CustomHandler, is_empty
+from ld.utils import TemplateHelperHandler, is_empty
 import logging
 import cgi
 from ld.models import Group, UserInfo, GROUP_SHORTNAME_REGEXP
 from google.appengine.api import users
 import re
 
-class SignupHandler(CustomHandler):
+class SignupHandler(TemplateHelperHandler):
 	def get(self):
 		userinfo = UserInfo.current()
 		if userinfo != None and userinfo.group != None:

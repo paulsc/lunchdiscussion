@@ -7,13 +7,13 @@ from google.appengine.api import images
 
 from datetime import datetime, date, timedelta
 
-from utils import CustomHandler, incr, ask_to_rate, is_morning,\
+from utils import TemplateHelperHandler, incr, ask_to_rate, is_morning,\
     notify_suggestion, post_comment
 
 from models import UserInfo, Suggestion, Restaurant, RestaurantComment
 from ld.models import Group, get_group
 
-class IndexHandler(CustomHandler):
+class IndexHandler(TemplateHelperHandler):
 	def get(self):
 		userinfo = UserInfo.current()
 		if userinfo == None or userinfo.group == None:
@@ -30,7 +30,7 @@ class IndexHandler(CustomHandler):
 
 		self.redirect('/' + userinfo.group.shortname)
 		
-class HomeHandler(CustomHandler):
+class HomeHandler(TemplateHelperHandler):
 	def get(self):
 		userinfo = UserInfo.current()
 		if userinfo == None or userinfo.group == None:
@@ -49,19 +49,19 @@ class HomeHandler(CustomHandler):
 			self.render('request_invite', { 'notification': "not a member of this group" })
 			return
 		
-		context = { 'logout_url': users.create_logout_url('/'),
+		context = { 'logout_url': users.create_logout_url('/test'),
 					'userinfo': userinfo,
 					'ask_to_rate' : ask_to_rate(),
 					'active_crew': UserInfo.get_active_crew(),
 					'dead_crew': UserInfo.get_dead_crew(), 
 					'suggestions': Suggestion.get_todays(),
-					'restaurants': Restaurant.all().order('name'),
+					'restaurants': Restaurant.gql("WHERE group = :1 ORDER by name", group),
 					}
 
 		self.render('home', context)		
 		
 
-class RestaurantHandler(CustomHandler):
+class RestaurantHandler(TemplateHelperHandler):
 	def get(self):
 		name = cgi.escape(self.request.get('add'))
 		name = name.capitalize()
@@ -77,7 +77,7 @@ class RestaurantHandler(CustomHandler):
 		context = { 'restaurants': restaurants }
 		self.render('restaurants', context)
 
-class SuggestionHandler(CustomHandler):
+class SuggestionHandler(TemplateHelperHandler):
 	def get(self):
 		new = cgi.escape(self.request.get('add'))
 		userinfo = UserInfo.current()
@@ -116,7 +116,7 @@ class SuggestionHandler(CustomHandler):
 		post_comment(text, userinfo, suggestion)
 		self.get()
 
-class ProfileHandler(CustomHandler):
+class ProfileHandler(TemplateHelperHandler):
 	def get(self):
 		userinfo = cgi.escape(self.request.get('user'))
 		if userinfo != '':
@@ -151,14 +151,14 @@ class ProfileHandler(CustomHandler):
 		userinfo.put()
 		self.redirect('/')
 		
-class RestaurantInfoHandler(CustomHandler):
+class RestaurantInfoHandler(TemplateHelperHandler):
 	def get(self):
 		restaurant = db.get(cgi.escape(self.request.get('restaurant')))
 		context = { 'name': restaurant.name,
 							'comments': restaurant.ordered_comments() }
 		self.render('restaurant-info', context)
 
-class AvatarHandler(CustomHandler):
+class AvatarHandler(TemplateHelperHandler):
 	def get(self):
 		userkey = self.request.get("user")
 		if userkey == '':
@@ -172,7 +172,7 @@ class AvatarHandler(CustomHandler):
 		else:
 			self.error(404)
 
-class RatingHandler(CustomHandler):	
+class RatingHandler(TemplateHelperHandler):	
 	def add_rating(self, date, restaurant, author, rating):
 		userinfo = UserInfo.current()
 		if userinfo.voted_for_day(date):
@@ -255,7 +255,7 @@ class RatingHandler(CustomHandler):
 							'other_restaurants': other_restaurants }			
 		self.render('rate', context)		
 
-class StatsHandler(CustomHandler):
+class StatsHandler(TemplateHelperHandler):
 	def get(self):
 		context = { 
 			'karma_ranking': Restaurant.all().order('-karma').fetch(10),

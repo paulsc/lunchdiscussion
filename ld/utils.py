@@ -9,12 +9,12 @@ from timezone import Eastern
 
 from models import UserInfo, Suggestion, Comment
 
-class CustomHandler(webapp.RequestHandler):
+class TemplateHelperHandler(webapp.RequestHandler):
 	def render(self, template_name, context = None):
 		path = os.path.join(os.path.dirname(__file__), '..',
 				'templates', '%s.html' % template_name) 
 		self.response.out.write(template.render(path, context))
-
+		
 def incr(var, val = 1): return 1 if var == None else var + val
 
 def is_morning():
