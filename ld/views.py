@@ -11,7 +11,7 @@ from utils import CustomHandler, incr, ask_to_rate, is_morning,\
     notify_suggestion, post_comment
 
 from models import UserInfo, Suggestion, Restaurant, RestaurantComment
-from ld.models import Group
+from ld.models import Group, get_group
 
 class IndexHandler(CustomHandler):
 	def get(self):
@@ -40,7 +40,7 @@ class HomeHandler(CustomHandler):
 		group_shortname = self.request.path.strip('/')
 		group = Group.gql('WHERE shortname = :1', group_shortname).get()
 		if group == None:
-			self.redirect('/signup')
+			self.response.out.write('group not found')
 			return
 		
 		logging.info(userinfo.group.key())
@@ -63,12 +63,18 @@ class HomeHandler(CustomHandler):
 
 class RestaurantHandler(CustomHandler):
 	def get(self):
-		new = cgi.escape(self.request.get('add'))
-		if new != '':
-			res = Restaurant(name=new.capitalize())
-			res.put()
+		name = cgi.escape(self.request.get('add'))
+		name = name.capitalize()
+		group = get_group()
 
-		context = { 'restaurants': Restaurant.all().order('name') }
+		if name != '':
+			restaurant = Restaurant.gql("WHERE name = :1 AND group = :2", name, group).get()
+			if restaurant == None:
+				restaurant = Restaurant(name=name, group=group)
+				restaurant.put()
+		
+		restaurants = Restaurant.gql("WHERE group = :1 ORDER by name", group)
+		context = { 'restaurants': restaurants }
 		self.render('restaurants', context)
 
 class SuggestionHandler(CustomHandler):

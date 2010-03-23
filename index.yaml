@@ -21,6 +21,11 @@ indexes:
   - name: date
     direction: desc
 
+- kind: Restaurant
+  properties:
+  - name: group
+  - name: name
+
 - kind: RestaurantComment
   properties:
   - name: restaurant

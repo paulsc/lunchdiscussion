@@ -8,8 +8,9 @@ import re
 class SignupHandler(CustomHandler):
 	def get(self):
 		userinfo = UserInfo.current()
-		if userinfo.group != None:
+		if userinfo != None and userinfo.group != None:
 			self.redirect("/" + userinfo.group.shortname)
+			return
 		
 		self.render('signup')
 		

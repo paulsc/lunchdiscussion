@@ -9,6 +9,7 @@ DEAD_LIMIT = 7
 
 class Restaurant(db.Model):
 	name = db.StringProperty()
+	group = db.ReferenceProperty(collection_name='restaurants')
 	karma = db.IntegerProperty()
 	lunchcount = db.IntegerProperty()
 	lastlunched = db.DateProperty()
@@ -53,7 +54,11 @@ class Group(db.Model):
 	fullname = db.StringProperty()
 	#address = db.TextProperty()
 	creator = db.ReferenceProperty(UserInfo)
-	created = db.DateProperty(auto_now_add=True)			
+	created = db.DateProperty(auto_now_add=True)		
+
+def get_group():
+	userinfo = UserInfo.current()
+	return userinfo.group
 
 class Suggestion(db.Model):
 	author = db.ReferenceProperty(UserInfo)
