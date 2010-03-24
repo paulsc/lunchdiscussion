@@ -16,23 +16,23 @@ from ld.utils import LDContextHandler, can_vote
 
 class IndexHandler(LDContextHandler):
 	def get(self):
-		if self.userinfo == None or self.userinfo.group == None:
+		if self.currentuser == None or self.currentgroup == None:
 			self.redirect('/signup')
 			return
 
-		if self.userinfo.nickname == "":
+		if self.currentuser.nickname == "":
 			self.redirect('/profile')
 			return
 
-		if self.userinfo.group == None:
+		if self.currentuser.group == None:
 			self.redirect('/signup')
 			return
 
-		self.redirect('/' + self.userinfo.group.shortname)
+		self.redirect('/' + self.currentuser.group.shortname)
 		
 class HomeHandler(LDContextHandler):
 	def get(self):
-		if self.userinfo == None or self.userinfo.group == None:
+		if self.currentuser == None or self.currentuser.group == None:
 			self.redirect('/')
 			return
 		
@@ -42,14 +42,14 @@ class HomeHandler(LDContextHandler):
 			self.response.out.write('group not found')
 			return
 		
-		if self.userinfo.group.key() != group.key():
+		if self.currentuser.group.key() != group.key():
 			self.render('request_invite', { 'notification': "not a member of this group" })
 			return
 		
 		context = { 'logout_url': users.create_logout_url('/test'),
-					'ask_to_rate' : can_vote(self.userinfo),
-					'active_crew': get_active_crew(self.userinfo.group),
-					'dead_crew': get_dead_crew(self.userinfo.group), 
+					'ask_to_rate' : can_vote(self.currentuser),
+					'active_crew': get_active_crew(self.currentuser.group),
+					'dead_crew': get_dead_crew(self.currentuser.group), 
 					'suggestions': Suggestion.get_todays(),
 					'restaurants': Restaurant.gql("WHERE group = :1 ORDER by name", group) }
 
@@ -62,69 +62,67 @@ class RestaurantHandler(LDContextHandler):
 		name = name.capitalize()
 
 		if name != '':
-			restaurant = Restaurant.gql("WHERE name = :1 AND group = :2", name, self.userinfo.group).get()
+			restaurant = Restaurant.gql("WHERE name = :1 AND group = :2", name, self.currentuser.group).get()
 			if restaurant == None:
-				restaurant = Restaurant(name=name, group=self.userinfo.group)
+				restaurant = Restaurant(name=name, group=self.currentuser.group)
 				restaurant.put()
 		
-		restaurants = Restaurant.gql("WHERE group = :1 ORDER by name", self.userinfo.group)
+		restaurants = Restaurant.gql("WHERE group = :1 ORDER by name", self.currentuser.group)
 		context = { 'restaurants': restaurants }
 		self.render('restaurants', context)
 
-class SuggestionHandler(TemplateHelperHandler):
+class SuggestionHandler(LDContextHandler):
 	def get(self):
 		new = cgi.escape(self.request.get('add'))
-		userinfo = UserInfo.current()
 		if new != '':
-			sug = Suggestion(restaurant=db.get(new), author=userinfo)
+			sug = Suggestion(restaurant=db.get(new), author=self.currentuser)
 			sug.put()
-			userinfo.lastposted = date.today()
-			userinfo.put()
+			self.currentuser.lastposted = date.today()
+			self.currentuser.put()
 			notify_suggestion(sug)
 
 		remove = cgi.escape(self.request.get('remove'))
 		if remove != '':
 			suggestion = db.get(remove)
-			if suggestion.author.user == userinfo.user:
+			if suggestion.author.user == self.currentuser.user:
 				suggestion.delete()	
 			else:
-				logging.error('user: %s tried to delete suggestion he doesn\'t own' % userinfo.nickname)
+				logging.error('user: %s tried to delete suggestion he doesn\'t own' % self.currentuser.nickname)
 
 		remove_comment = cgi.escape(self.request.get('remove_comment'))
 		if remove_comment != '':
 			comment = db.get(remove_comment)
-			if comment.author.user == userinfo.user:
+			if comment.author.user == self.currentuser.user:
 				comment.delete()
 			else:
-				logging.error('user: %s tried to delete comment he doesn\'t own' % userinfo.nickname)
+				logging.error('user: %s tried to delete comment he doesn\'t own' % self.currentuser.nickname)
 
 		context = { 'suggestions': Suggestion.get_todays(), 
-					'userinfo': userinfo }
+					'userinfo': self.currentuser }
 
 		self.render('suggestions', context)
 
 	def post(self):
 		text = cgi.escape(self.request.get('text'))
 		suggestion = db.get(cgi.escape(self.request.get('suggestion')))
-		userinfo = UserInfo.current()
-		post_comment(text, userinfo, suggestion)
+		post_comment(text, self.currentuser, suggestion)
 		self.get()
 
-class ProfileHandler(TemplateHelperHandler):
+class ProfileHandler(LDContextHandler):
 	def get(self):
 		userinfo = cgi.escape(self.request.get('user'))
 		if userinfo != '':
 			userinfo = db.get(userinfo)
 			to_render = 'profile'
 		else:
-			userinfo = UserInfo.current()
+			userinfo = self.currentuser
 			to_render = 'edit_profile'
 	
 		context = { 'userinfo': userinfo, 'user': users.get_current_user() }
 		self.render(to_render, context)
 
 	def post(self):
-		userinfo = UserInfo.current()
+		userinfo = self.currentuser
 		if userinfo == None:
 			userinfo = UserInfo()
 		userinfo.nickname = cgi.escape(self.request.get('nickname'))
@@ -152,11 +150,11 @@ class RestaurantInfoHandler(TemplateHelperHandler):
 							'comments': restaurant.ordered_comments() }
 		self.render('restaurant-info', context)
 
-class AvatarHandler(TemplateHelperHandler):
+class AvatarHandler(LDContextHandler):
 	def get(self):
 		userkey = self.request.get("user")
 		if userkey == '':
-			userinfo = UserInfo.current()
+			userinfo = self.currentuser
 		else:
 			userinfo = db.get(userkey)
 
@@ -168,16 +166,15 @@ class AvatarHandler(TemplateHelperHandler):
 
 class RatingHandler(TemplateHelperHandler):	
 	def add_rating(self, date, restaurant, author, rating):
-		userinfo = UserInfo.current()
-		if userinfo.voted_for_day(date):
+		if self.currentuser.voted_for_day(date):
 			logging.error('user %s already voted for that day.' 
-							% userinfo.nickname)
+							% self.currentuser.nickname)
 			self.error(500)
 			return
 		
 		if not rating in range(-2,3):
 			logging.error('invalid rating received from user %s: %d' 
-							% (userinfo.nickname, rating))
+							% (self.currentuser.nickname, rating))
 			self.error(500)
 			return
 			
@@ -188,19 +185,17 @@ class RatingHandler(TemplateHelperHandler):
 			author.karma = incr(author.karma, rating)
 			author.put()
 				
-		userinfo = UserInfo.current()
-		userinfo.lastvoted = date
-		userinfo.lunchcount = incr(userinfo.lunchcount)
-		userinfo.put()
+		self.currentuser.lastvoted = date
+		self.currentuser.lunchcount = incr(self.currentuser.lunchcount)
+		self.currentuser.put()
 	
 	def post(self):
 		cancel = self.request.get('cancel')
 		day = date.fromordinal(int(self.request.get('day')))
 		
 		if cancel == 'true':
-			userinfo = UserInfo.current()
-			userinfo.lastvoted = day
-			userinfo.put()
+			self.currentuser.lastvoted = day
+			self.currentuser.put()
 			self.render('thanks', None)
 			return
 
@@ -219,7 +214,7 @@ class RatingHandler(TemplateHelperHandler):
 		if comment != "":
 			comment = comment.replace('\n', '<br/>')	
 			comment = RestaurantComment(text=comment, restaurant=restaurant,
-						author=UserInfo.current(), rating=rating)
+						author=self.currentuser, rating=rating)
 			comment.put()
 
 		self.add_rating(day, restaurant, author, rating)

@@ -18,7 +18,8 @@ class TemplateHelperHandler(webapp.RequestHandler):
 		self.response.out.write(template.render(path, context))
 		
 class LDContextHandler(TemplateHelperHandler):
-	userinfo = UserInfo.gql("WHERE user = :1", users.get_current_user()).get()
+	currentuser = UserInfo.gql("WHERE user = :1", users.get_current_user()).get()
+	currentgroup = currentuser.group if currentuser != None else None
 
 	def render(self, template_name, context = {}):
 		context['userinfo'] = self.userinfo
