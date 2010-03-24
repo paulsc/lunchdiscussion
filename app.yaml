@@ -1,5 +1,5 @@
 application: lunchdiscuss
-version: queues-eclipse
+version: tasklogin-fix
 runtime: python
 api_version: 1
 
@@ -12,6 +12,18 @@ handlers:
   
 - url: /images
   static_dir: images
+
+- url: /_ah/mail/.+
+  script: main.py
+  login: admin
+
+- url: /emailtask
+  script: main.py
+  login: admin
+
+- url: /cron/.+
+  script: main.py
+  login: admin
 
 - url: .*
   script: main.py
