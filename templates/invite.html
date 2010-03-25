@@ -1,0 +1,15 @@
+{% extends "header.html" %}
+
+
+{% block main %}
+
+	<h3>invite someone to: {{ userinfo.group.fullname }}</h3>
+	
+	<form action="/invite" method="post">
+	
+		email: <input type="text" name="email"/>
+		<input type="submit" value="go"/>
+	
+	</form>
+
+{% endblock %}

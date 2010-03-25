@@ -8,6 +8,7 @@ from ld.emailhandler import EmailTaskHandler, IncomingMailHandler
 from ld.cron import DailyCronHandler
 from ld.signup import SignupHandler
 from ld.models import GROUP_SHORTNAME_REGEXP
+from ld.invite import InviteHandler, InviteLinkHandler
 
 def main():
 	application = webapp.WSGIApplication([('/', IndexHandler),
@@ -22,6 +23,8 @@ def main():
 										  ("/emailtask", EmailTaskHandler),
 										  IncomingMailHandler.mapping(),
 										  ('/cron/daily', DailyCronHandler),
+										  ('/invite', InviteHandler),
+										  ('/invite/\w+', InviteLinkHandler),
 										  ('/%s/?' % GROUP_SHORTNAME_REGEXP, HomeHandler)
 										  ],
                                        debug=True)

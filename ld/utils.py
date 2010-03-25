@@ -30,7 +30,6 @@ class LDContextHandler(TemplateHelperHandler):
 		context['logout_url'] = users.create_logout_url('/')
 		super(LDContextHandler, self).render(template_name, context)
 		
-
 def incr(var, val = 1): 
 	return 1 if var == None else var + val
 

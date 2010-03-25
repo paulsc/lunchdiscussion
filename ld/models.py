@@ -97,4 +97,9 @@ class ReplyTo(db.Model):
 	date = db.DateTimeProperty(auto_now_add=True)
 	def __str__(self):
 		return "%s@lunchdiscuss.appspotmail.com" % self.uuid
-
+	
+class InviteCode(db.Model):
+	uuid = db.StringProperty()
+	group = db.ReferenceProperty(Group)
+	created = db.DateTimeProperty(auto_now_add=True)
+	
