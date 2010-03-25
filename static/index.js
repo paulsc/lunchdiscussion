@@ -6,8 +6,13 @@ function addRestaurant() {
 	$('restaurant_name').value = '';
 }
 
+function showLoadingSuggestions() {
+	$('suggestions').innerHTML = 
+		"<div class='loading_suggestions'>" + $('suggestions').innerHTML + "</div>";
+}
+
 function newSuggestion(restaurantKey) {
-	$('suggestions').innerHTML = "<div class='no_suggestions'><img src='images/spinner.gif' alt='spinner'/></div>";
+	showLoadingSuggestions();
 	new Ajax.Updater('suggestions', 
 			'/suggestions?add=' + restaurantKey,
 			{ method: 'get' });
