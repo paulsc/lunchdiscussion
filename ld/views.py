@@ -75,7 +75,8 @@ class SuggestionHandler(LDContextHandler):
 	def get(self):
 		new = cgi.escape(self.request.get('add'))
 		if new != '':
-			sug = Suggestion(restaurant=db.get(new), author=self.currentuser)
+			sug = Suggestion(restaurant=db.get(new), author=self.currentuser, 
+							 group=self.currentgroup)
 			sug.put()
 			self.currentuser.lastposted = date.today()
 			self.currentuser.put()
