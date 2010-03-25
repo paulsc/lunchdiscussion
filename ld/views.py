@@ -165,7 +165,7 @@ class AvatarHandler(LDContextHandler):
 		else:
 			self.error(404)
 
-class RatingHandler(TemplateHelperHandler):	
+class RatingHandler(LDContextHandler):	
 	def add_rating(self, date, restaurant, author, rating):
 		if self.currentuser.voted_for_day(date):
 			logging.error('user %s already voted for that day.' 
@@ -197,7 +197,7 @@ class RatingHandler(TemplateHelperHandler):
 		if cancel == 'true':
 			self.currentuser.lastvoted = day
 			self.currentuser.put()
-			self.render('thanks', None)
+			self.render('thanks')
 			return
 
 		rating = int(self.request.get('rating'))
@@ -219,7 +219,7 @@ class RatingHandler(TemplateHelperHandler):
 			comment.put()
 
 		self.add_rating(day, restaurant, author, rating)
-		self.render('thanks', None)
+		self.render('thanks')
 
 	def get(self):
 		if is_morning():
@@ -229,7 +229,7 @@ class RatingHandler(TemplateHelperHandler):
 			day = datetime.now()
 			day_title = "today"
 		
-		suggestions = Suggestion.get_for_day(day)
+		suggestions = Suggestion.get_for_day(day, self.currentgroup)
 		restaurants = [ s.restaurant for s in suggestions ]
 		res_keys = [ r.key() for r in restaurants ]
 
@@ -240,9 +240,9 @@ class RatingHandler(TemplateHelperHandler):
 				other_restaurants.append(res)
 				
 		context = { 'day': day.toordinal(),
-							'day_title': day_title, 
-							'restaurants': restaurants,
-							'other_restaurants': other_restaurants }			
+					'day_title': day_title, 
+					'restaurants': restaurants,
+					'other_restaurants': other_restaurants }			
 		self.render('rate', context)		
 
 class StatsHandler(TemplateHelperHandler):
