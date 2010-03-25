@@ -44,7 +44,7 @@ def is_morning():
 def can_vote(userinfo):
 	def can_vote_for_day(day):
 		return (not userinfo.voted_for_day(day)
-			    and Suggestion.get_for_day(day).count() > 0)
+			    and Suggestion.get_for_day(day, userinfo.group).count() > 0)
 	
 	if is_morning():
 		return can_vote_for_day(date.today() - timedelta(1))
@@ -64,7 +64,7 @@ def post_comment(text, author, suggestion):
 def send_notification(message, suggestion, exclude_user):
 	def f(i): 
 		return i.nickname != "" and i.user != exclude_user and i.email != 'none'
-	targets = filter(f, get_active_crew())
+	targets = filter(f, get_active_crew(suggestion.group))
 	#targets = UserInfo.gql('WHERE nickname = :1', 'paul')
 	
 	params = { 'suggestion': suggestion.key(), 'message': message }

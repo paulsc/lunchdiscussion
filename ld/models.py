@@ -62,13 +62,13 @@ class Suggestion(db.Model):
 		return self.comments.order('date')
 
 	@staticmethod
-	def get_for_day(date):
-		return Suggestion.gql("WHERE date=DATE(:1, :2, :3)", date.year, 
-								date.month, date.day)
+	def get_for_day(date, group):
+		return Suggestion.gql("WHERE date=DATE(:1, :2, :3) AND group = :4", 
+							     date.year, date.month, date.day, group)
 
 	@staticmethod
-	def get_todays():
-		return Suggestion.get_for_day(datetime.now())
+	def get_todays(group):
+		return Suggestion.get_for_day(datetime.now(), group)
 
 	@staticmethod
 	def find(date, restaurant_key):

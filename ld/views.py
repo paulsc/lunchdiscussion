@@ -48,9 +48,9 @@ class HomeHandler(LDContextHandler):
 		
 		context = { 'logout_url': users.create_logout_url('/test'),
 					'ask_to_rate' : can_vote(self.currentuser),
-					'active_crew': get_active_crew(self.currentuser.group),
-					'dead_crew': get_dead_crew(self.currentuser.group), 
-					'suggestions': Suggestion.get_todays(),
+					'active_crew': get_active_crew(self.currentgroup),
+					'dead_crew': get_dead_crew(self.currentgroup), 
+					'suggestions': Suggestion.get_todays(self.currentgroup),
 					'restaurants': Restaurant.gql("WHERE group = :1 ORDER by name", group) }
 
 		self.render('home', context)		
@@ -98,7 +98,7 @@ class SuggestionHandler(LDContextHandler):
 			else:
 				logging.error('user: %s tried to delete comment he doesn\'t own' % self.currentuser.nickname)
 
-		context = { 'suggestions': Suggestion.get_todays(), 
+		context = { 'suggestions': Suggestion.get_todays(self.currentgroup), 
 					'userinfo': self.currentuser }
 
 		self.render('suggestions', context)
