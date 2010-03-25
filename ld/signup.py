@@ -1,15 +1,13 @@
-from ld.utils import TemplateHelperHandler, is_empty
-import logging
-import cgi
-from ld.models import Group, UserInfo, GROUP_SHORTNAME_REGEXP
 from google.appengine.api import users
+from ld.models import Group, UserInfo, GROUP_SHORTNAME_REGEXP
+from ld.utils import is_empty, LDContextHandler
+import cgi
 import re
 
-class SignupHandler(TemplateHelperHandler):
+class SignupHandler(LDContextHandler):
 	def get(self):
-		userinfo = UserInfo.current()
-		if userinfo != None and userinfo.group != None:
-			self.redirect("/" + userinfo.group.shortname)
+		if self.currentuser != None and self.currentgroup != None:
+			self.redirect("/" + self.currentgroup.shortname)
 			return
 		
 		self.render('signup')

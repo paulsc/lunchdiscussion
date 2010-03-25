@@ -18,11 +18,15 @@ class TemplateHelperHandler(webapp.RequestHandler):
 		self.response.out.write(template.render(path, context))
 		
 class LDContextHandler(TemplateHelperHandler):
-	currentuser = UserInfo.gql("WHERE user = :1", users.get_current_user()).get()
-	currentgroup = currentuser.group if currentuser != None else None
+	def __init__(self):
+		self.currentuser = UserInfo.gql("WHERE user = :1", users.get_current_user()).get()
+		if self.currentuser:
+			self.currentgroup = self.currentuser.group
+			
+		super(LDContextHandler, self).__init__()
 
 	def render(self, template_name, context = {}):
-		context['userinfo'] = self.userinfo
+		context['userinfo'] = self.currentuser
 		context['logout_url'] = users.create_logout_url('/')
 		super(LDContextHandler, self).render(template_name, context)
 		
