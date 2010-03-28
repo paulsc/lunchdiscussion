@@ -24,7 +24,7 @@ def main():
 										  IncomingMailHandler.mapping(),
 										  ('/cron/daily', DailyCronHandler),
 										  ('/invite', InviteHandler),
-										  ('/invite/\w+', InviteLinkHandler),
+										  ('/invite/(\w+)', InviteLinkHandler),
 										  ('/%s/?' % GROUP_SHORTNAME_REGEXP, HomeHandler)
 										  ],
                                        debug=True)

@@ -9,7 +9,8 @@ from timezone import Eastern
 
 from models import UserInfo, Suggestion, Comment
 from google.appengine.api import users
-from ld.models import get_active_crew
+from ld.models import get_active_crew, Group
+from functools import wraps
 
 class TemplateHelperHandler(webapp.RequestHandler):
 	def render(self, template_name, context = None):
@@ -23,17 +24,42 @@ class LDContextHandler(TemplateHelperHandler):
 		path = request.path.lstrip('/')
 		slashindex = path.find('/')
 		if slashindex == -1:
-			self.currentgroup = path
+			groupname = path
 		else:
-			self.currentgroup = path[:slashindex]
+			groupname = path[:slashindex]
+		self.currentgroup = Group.gql("WHERE shortname = :1", groupname).get()
 		
 		super(LDContextHandler, self).initialize(request, response)
 
-	def render(self, template_name, context = {}):
+	def render(self, template_name, context = {}, notification=None):
 		context['currentuser'] = self.currentuser
 		context['currentgroup'] = self.currentgroup
 		context['logout_url'] = users.create_logout_url('/')
+		if notification != None:
+			context['notification'] = notification
+		
 		super(LDContextHandler, self).render(template_name, context)
+		
+def authorize_group(f):
+	@wraps(f)
+	def wrapper(self, *args, **kwds):
+		if self.currentgroup == None:
+			self.error(404)
+			return
+
+		if self.currentuser == None:
+			self.redirect('/signup')
+			return
+
+		grouprefs = self.currentuser.grouprefs
+		result = grouprefs.filter('groupname =', self.currentgroup.shortname).get()
+		if result == None: # user is not a member of this group
+			self.render('request_invite', notification="not a member of this group")
+			return
+		
+		return f(self, *args, **kwds)
+	return wrapper
+
 		
 def incr(var, val = 1): 
 	return 1 if var == None else var + val

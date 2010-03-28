@@ -11,12 +11,12 @@ from utils import TemplateHelperHandler, incr, is_morning,\
     notify_suggestion, post_comment
 
 from models import UserInfo, Suggestion, Restaurant, RestaurantComment
-from ld.models import Group, get_active_crew, get_dead_crew
-from ld.utils import LDContextHandler, can_vote
+from ld.models import get_active_crew, get_dead_crew
+from ld.utils import LDContextHandler, can_vote, authorize_group
 
 class IndexHandler(LDContextHandler):
 	def get(self):
-		if self.currentuser == None or self.currentgroup == None:
+		if self.currentuser == None or self.currentuser.grouprefs.count() == 0:
 			self.redirect('/signup')
 			return
 
@@ -24,37 +24,23 @@ class IndexHandler(LDContextHandler):
 			self.redirect('/profile')
 			return
 
-		if self.currentuser.group == None:
-			self.redirect('/signup')
-			return
-
-		self.redirect('/' + self.currentuser.group.shortname)
+		firstgroup = self.currentuser.grouprefs.get().group
+		self.redirect('/' + firstgroup.shortname)
 		
 class HomeHandler(LDContextHandler):
+	@authorize_group
 	def get(self):
-		if self.currentuser == None or self.currentuser.group == None:
-			self.redirect('/')
-			return
+		group = self.currentgroup
 		
-		group_shortname = self.request.path.strip('/')
-		group = Group.gql('WHERE shortname = :1', group_shortname).get()
-		if group == None:
-			self.response.out.write('group not found')
-			return
+		logging.info("group:" + group.shortname)
 		
-		if self.currentuser.group.key() != group.key():
-			self.render('request_invite', { 'notification': "not a member of this group" })
-			return
-		
-		context = { 'logout_url': users.create_logout_url('/test'),
-					'ask_to_rate' : can_vote(self.currentuser),
-					'active_crew': get_active_crew(self.currentgroup),
-					'dead_crew': get_dead_crew(self.currentgroup), 
-					'suggestions': Suggestion.get_todays(self.currentgroup),
+		context = { 'ask_to_rate' : can_vote(self.currentuser),
+					'active_crew': get_active_crew(group),
+					'dead_crew': get_dead_crew(group), 
+					'suggestions': Suggestion.get_todays(group),
 					'restaurants': Restaurant.gql("WHERE group = :1 ORDER by name", group) }
 
-		self.render('home', context)		
-		
+		self.render('home', context)
 
 class RestaurantHandler(LDContextHandler):
 	def get(self):
@@ -113,20 +99,24 @@ class ProfileHandler(LDContextHandler):
 	def get(self):
 		userinfo = cgi.escape(self.request.get('user'))
 		if userinfo != '':
-			userinfo = db.get(userinfo)
-			to_render = 'profile'
+			self.render('profile', { 'userinfo': db.get(userinfo) })
 		else:
-			userinfo = self.currentuser
-			to_render = 'edit_profile'
-	
-		context = { 'userinfo': userinfo, 'user': users.get_current_user() }
-		self.render(to_render, context)
+			self.render_edit()
+
+	def render_edit(self, notification=None):
+		context = { 'userinfo': self.currentuser, 'user': users.get_current_user( )}
+		self.render('edit_profile', context, notification=notification)
 
 	def post(self):
 		userinfo = self.currentuser
 		if userinfo == None:
 			userinfo = UserInfo()
+		
 		userinfo.nickname = cgi.escape(self.request.get('nickname'))
+		if userinfo.nickname == "":
+			self.render_edit("nickname can't be empty")
+			return
+		
 		email = cgi.escape(self.request.get('email'))
 		avatar = self.request.get('avatar')
 		first_login = self.request.get('first_login')

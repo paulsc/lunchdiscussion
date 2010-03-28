@@ -52,8 +52,9 @@ class Group(db.Model):
 	created = db.DateProperty(auto_now_add=True)		
 	
 class GroupUserInfo(db.Model):
-	group = db.ReferenceProperty(Group, required=True, collection_name='users')
-	user = db.ReferenceProperty(UserInfo, required=True, collection_name='groups')
+	group = db.ReferenceProperty(Group, required=True, collection_name='userrefs')
+	user = db.ReferenceProperty(UserInfo, required=True, collection_name='grouprefs')
+	groupname = db.StringProperty() # for quick access
 
 class Suggestion(db.Model):
 	author = db.ReferenceProperty(UserInfo)

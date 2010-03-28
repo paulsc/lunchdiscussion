@@ -45,7 +45,8 @@ class SignupHandler(LDContextHandler):
 					  creator=userinfo)
 		group.put()		
 		
-		relationship = GroupUserInfo(group=group, user=userinfo)
+		relationship = GroupUserInfo(group=group, user=userinfo, 
+									 groupname=group.shortname)
 		relationship.put()
 		
 		if is_empty(userinfo.nickname):
