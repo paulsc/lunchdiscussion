@@ -7,18 +7,18 @@
 {% block extramenu %}
 <a href="/invite">invite</a> | 
 <a href="/stats">stats</a> | 
-<a href="/profile">{{ userinfo.nickname }}</a> |
+<a href="/profile">{{ currentuser.nickname }}</a> |
 {% endblock %}
 
 {% block main %}
 
-		<div id="groupname">{{ userinfo.group.fullname }}</div>
+		<div id="groupname">{{ currentgroup.fullname }}</div>
 
 		<div id="discussrs">
 			<table style="text-align: center"><tr>
 					{% for member in active_crew %}
 					<td>
-						{% ifnotequal member.user userinfo.user %}
+						{% ifnotequal member.user currentuser.user %}
 							<a href="javascript:showProfilePopup('{{ member.key }}')">
 						{% else %}
 							<a href="/profile">
@@ -32,7 +32,7 @@
 					{% endfor %}
 					{% for member in dead_crew %}
 					<td style="opacity: 0.3">
-						{% ifnotequal member.user userinfo.user %}
+						{% ifnotequal member.user currentuser.user %}
 							<a href="javascript:showProfilePopup('{{ member.key }}')">
 						{% else %}
 							<a href="/profile">

@@ -23,7 +23,6 @@ class Restaurant(db.Model):
 
 class UserInfo(db.Model):
 	user = db.UserProperty(auto_current_user_add=True)
-	group = db.ReferenceProperty(collection_name='users')	
 	email = db.EmailProperty()
 	nickname = db.StringProperty()
 	avatar = db.BlobProperty()
@@ -51,6 +50,10 @@ class Group(db.Model):
 	#address = db.TextProperty()
 	creator = db.ReferenceProperty(UserInfo)
 	created = db.DateProperty(auto_now_add=True)		
+	
+class GroupUserInfo(db.Model):
+	group = db.ReferenceProperty(Group, required=True, collection_name='users')
+	user = db.ReferenceProperty(UserInfo, required=True, collection_name='groups')
 
 class Suggestion(db.Model):
 	author = db.ReferenceProperty(UserInfo)

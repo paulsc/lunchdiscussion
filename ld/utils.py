@@ -18,15 +18,20 @@ class TemplateHelperHandler(webapp.RequestHandler):
 		self.response.out.write(template.render(path, context))
 		
 class LDContextHandler(TemplateHelperHandler):
-	def __init__(self):
+	def initialize(self, request, response):
 		self.currentuser = UserInfo.gql("WHERE user = :1", users.get_current_user()).get()
-		if self.currentuser:
-			self.currentgroup = self.currentuser.group
-			
-		super(LDContextHandler, self).__init__()
+		path = request.path.lstrip('/')
+		slashindex = path.find('/')
+		if slashindex == -1:
+			self.currentgroup = path
+		else:
+			self.currentgroup = path[:slashindex]
+		
+		super(LDContextHandler, self).initialize(request, response)
 
 	def render(self, template_name, context = {}):
-		context['userinfo'] = self.currentuser
+		context['currentuser'] = self.currentuser
+		context['currentgroup'] = self.currentgroup
 		context['logout_url'] = users.create_logout_url('/')
 		super(LDContextHandler, self).render(template_name, context)
 		

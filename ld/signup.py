@@ -1,5 +1,5 @@
 from google.appengine.api import users
-from ld.models import Group, UserInfo, GROUP_SHORTNAME_REGEXP
+from ld.models import Group, UserInfo, GROUP_SHORTNAME_REGEXP, GroupUserInfo
 from ld.utils import is_empty, LDContextHandler
 import cgi
 import re
@@ -36,17 +36,17 @@ class SignupHandler(LDContextHandler):
 			self.render("create_group", context)
 			return
 		
-		current_user = users.get_current_user()
-		userinfo = UserInfo.gql("WHERE user = :1", current_user).get()
+		userinfo = self.currentuser
 		if userinfo == None:
-			userinfo = UserInfo(user=current_user)
+			userinfo = UserInfo(user=users.get_current_user())
 			userinfo.put()
 		
 		group = Group(shortname=group_shortname, fullname=group_fullname,
 					  creator=userinfo)
 		group.put()		
-		userinfo.group = group
-		userinfo.put()
+		
+		relationship = GroupUserInfo(group=group, user=userinfo)
+		relationship.put()
 		
 		if is_empty(userinfo.nickname):
 			self.render('edit_profile')
