@@ -1,5 +1,5 @@
 from google.appengine.api import users
-from ld.models import Group, UserInfo, GROUP_SHORTNAME_REGEXP, GroupUserInfo
+from ld.models import Group, UserInfo, RE_GROUPNAME, GroupUserInfo
 from ld.utils import is_empty, LDContextHandler
 import cgi
 import re
@@ -19,7 +19,7 @@ class SignupHandler(LDContextHandler):
 	def post(self):
 		group_shortname = cgi.escape(self.request.get('group_shortname'))
 		
-		if re.match(GROUP_SHORTNAME_REGEXP, group_shortname) == None:
+		if re.match(RE_GROUPNAME, group_shortname) == None:
 			self.error("groups short name has to be alphanumeric with "
 					   "underscores and at least 3 characters long")
 			return

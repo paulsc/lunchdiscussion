@@ -31,31 +31,38 @@ class HomeHandler(LDContextHandler):
 	@authorize_group
 	def get(self):
 		group = self.currentgroup
-		
-		logging.info("group:" + group.shortname)
-		
 		context = { 'ask_to_rate' : can_vote(self.currentuser),
 					'active_crew': get_active_crew(group),
 					'dead_crew': get_dead_crew(group), 
 					'suggestions': Suggestion.get_todays(group),
-					'restaurants': Restaurant.gql("WHERE group = :1 ORDER by name", group) }
+					'restaurants': Restaurant.get_for_group(group) }
 
 		self.render('home', context)
 
 class RestaurantHandler(LDContextHandler):
+	@authorize_group
 	def get(self):
-		name = cgi.escape(self.request.get('add'))
-		name = name.capitalize()
+		context = { 'restaurants': Restaurant.get_for_group(self.currentgroup) }
+		self.render_plain('restaurants', context)
 
-		if name != '':
-			restaurant = Restaurant.gql("WHERE name = :1 AND group = :2", name, self.currentuser.group).get()
-			if restaurant == None:
-				restaurant = Restaurant(name=name, group=self.currentuser.group)
-				restaurant.put()
+	@authorize_group
+	def post(self):
+		name = cgi.escape(self.request.get('name'))
+		name = name.capitalize()
 		
-		restaurants = Restaurant.gql("WHERE group = :1 ORDER by name", self.currentuser.group)
-		context = { 'restaurants': restaurants }
-		self.render('restaurants', context)
+		if name == '':
+			self.error(400)
+			return
+			
+		restaurant = Restaurant.gql("WHERE name = :1 AND group = :2", name, self.currentgroup).get()
+		if restaurant == None:
+			restaurant = Restaurant(name=name, group=self.currentgroup)
+			restaurant.put()
+		else:
+			logging.info("restaurant '%s' already exists, skipping" % name)
+			
+		self.get()
+		
 
 class SuggestionHandler(LDContextHandler):
 	def get(self):

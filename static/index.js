@@ -1,8 +1,17 @@
 
+function buildGroupURL(subsection) {
+	path = window.location.pathname;
+	if (path.endsWith('/')) {
+		return path + subsection;
+	}
+	else {
+		return path + '/' + subsection;
+	}
+}
+	
 function addRestaurant() {
-	new Ajax.Updater('restaurants', 
-			'/restaurants?add=' + $F('restaurant_name'),
-			{ method: 'get' });
+	new Ajax.Updater('restaurants', buildGroupURL('restaurants'),
+			{ method: 'post', parameters: { name: $F('restaurant_name') } });
 	$('restaurant_name').value = '';
 }
 

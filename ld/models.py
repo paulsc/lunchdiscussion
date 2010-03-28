@@ -20,6 +20,10 @@ class Restaurant(db.Model):
 		return self.comments.order('date').fetch(10)
 	def has_comments(self):
 		return self.comments.count() > 0
+	
+	@classmethod
+	def get_for_group(cls, group):
+		return cls.gql("WHERE group=:1 ORDER BY name", group)
 
 class UserInfo(db.Model):
 	user = db.UserProperty(auto_current_user_add=True)
@@ -43,7 +47,7 @@ def get_dead_crew(group):
 	return UserInfo.gql('WHERE lastposted < DATE(:1, :2, :3) AND group = :4', 
 					one_week_ago.year, one_week_ago.month, one_week_ago.day, group)
 		
-GROUP_SHORTNAME_REGEXP = "\w{3,}"
+RE_GROUPNAME = "\w{3,}"
 class Group(db.Model):
 	shortname = db.StringProperty()
 	fullname = db.StringProperty()

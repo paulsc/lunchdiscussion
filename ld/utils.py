@@ -40,6 +40,9 @@ class LDContextHandler(TemplateHelperHandler):
 		
 		super(LDContextHandler, self).render(template_name, context)
 		
+	def render_plain(self, template_name, context):
+		super(LDContextHandler, self).render(template_name, context)
+		
 def authorize_group(f):
 	@wraps(f)
 	def wrapper(self, *args, **kwds):
