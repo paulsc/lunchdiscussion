@@ -11,7 +11,7 @@ from utils import TemplateHelperHandler, incr, is_morning,\
     notify_suggestion, post_comment
 
 from models import UserInfo, Suggestion, Restaurant, RestaurantComment
-from ld.models import get_active_crew, get_dead_crew
+from ld.models import get_active_crew, get_dead_crew, Comment
 from ld.utils import LDContextHandler, can_vote, authorize_group
 
 class IndexHandler(LDContextHandler):
@@ -31,7 +31,7 @@ class HomeHandler(LDContextHandler):
 	@authorize_group
 	def get(self):
 		group = self.currentgroup
-		context = { 'ask_to_rate' : can_vote(self.currentuser),
+		context = { 'ask_to_rate' : can_vote(self.currentuser, self.currentgroup),
 					'active_crew': get_active_crew(group),
 					'dead_crew': get_dead_crew(group), 
 					'suggestions': Suggestion.get_todays(group),
@@ -49,7 +49,6 @@ class RestaurantHandler(LDContextHandler):
 	def post(self):
 		name = cgi.escape(self.request.get('name'))
 		name = name.capitalize()
-		
 		if name == '':
 			self.error(400)
 			return
@@ -60,46 +59,55 @@ class RestaurantHandler(LDContextHandler):
 			restaurant.put()
 		else:
 			logging.info("restaurant '%s' already exists, skipping" % name)
-			
+
 		self.get()
-		
 
 class SuggestionHandler(LDContextHandler):
 	def get(self):
-		new = cgi.escape(self.request.get('add'))
-		if new != '':
-			sug = Suggestion(restaurant=db.get(new), author=self.currentuser, 
+		context = { 'suggestions': Suggestion.get_todays(self.currentgroup) }
+		self.render('suggestions', context)
+
+	def post(self):
+		action = cgi.escape(self.request.get('action'))
+		
+		if action == 'add_suggestion':
+			restaurant = cgi.escape(self.request.get('restaurant'))
+			if restaurant == '':
+				self.error(400)
+				return
+
+			sug = Suggestion(restaurant=db.get(restaurant), author=self.currentuser, 
 							 group=self.currentgroup)
 			sug.put()
 			self.currentuser.lastposted = date.today()
 			self.currentuser.put()
 			notify_suggestion(sug)
-
-		remove = cgi.escape(self.request.get('remove'))
-		if remove != '':
-			suggestion = db.get(remove)
+			
+		elif action == "remove_suggestion":
+			suggestion = cgi.escape(self.request.get('suggestion'))
+			suggestion = db.get(suggestion)
 			if suggestion.author.user == self.currentuser.user:
 				suggestion.delete()	
 			else:
 				logging.error('user: %s tried to delete suggestion he doesn\'t own' % self.currentuser.nickname)
 
-		remove_comment = cgi.escape(self.request.get('remove_comment'))
-		if remove_comment != '':
-			comment = db.get(remove_comment)
+		elif action == "add_comment":
+			text = cgi.escape(self.request.get('text'))
+			suggestion = db.get(cgi.escape(self.request.get('suggestion')))
+			post_comment(text, self.currentuser, suggestion)
+			
+		elif action == "remove_comment":
+			comment = cgi.escape(self.request.get('comment'))
+			comment = db.get(comment)
 			if comment.author.user == self.currentuser.user:
 				comment.delete()
 			else:
 				logging.error('user: %s tried to delete comment he doesn\'t own' % self.currentuser.nickname)
 
-		context = { 'suggestions': Suggestion.get_todays(self.currentgroup), 
-					'userinfo': self.currentuser }
-
-		self.render('suggestions', context)
-
-	def post(self):
-		text = cgi.escape(self.request.get('text'))
-		suggestion = db.get(cgi.escape(self.request.get('suggestion')))
-		post_comment(text, self.currentuser, suggestion)
+		else:
+			self.error(400)
+			return
+		
 		self.get()
 
 class ProfileHandler(LDContextHandler):

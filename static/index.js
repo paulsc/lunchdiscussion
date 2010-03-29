@@ -11,7 +11,8 @@ function buildGroupURL(subsection) {
 	
 function addRestaurant() {
 	new Ajax.Updater('restaurants', buildGroupURL('restaurants'),
-			{ method: 'post', parameters: { name: $F('restaurant_name') } });
+			{ method: 'post', 
+			  parameters: { name: $F('restaurant_name') } });
 	$('restaurant_name').value = '';
 }
 
@@ -22,33 +23,35 @@ function showLoadingSuggestions() {
 
 function newSuggestion(restaurantKey) {
 	showLoadingSuggestions();
-	new Ajax.Updater('suggestions', 
-			'/suggestions?add=' + restaurantKey,
-			{ method: 'get' });
+	new Ajax.Updater('suggestions', buildGroupURL('suggestions'),
+			{ method: 'post', 
+			  parameters: { action: 'add_suggestion', restaurant: restaurantKey } });
 }
 
 function newComment(sug, text) {
-	new Ajax.Updater('suggestions', '/suggestions', { 
-				method: 'post', 
-				parameters: { suggestion: sug, text: text }
-			});
+	showLoadingSuggestions();
+	new Ajax.Updater('suggestions', buildGroupURL('suggestions'),
+			{ method: 'post', 
+			  parameters: { action: 'add_comment', suggestion: sug, text: text } });
 }
 
 function removeSuggestion(key) {
 	var answer = confirm("Are you sure?");
 	if (answer) {
-		new Ajax.Updater('suggestions', 
-				'/suggestions?remove=' + key,
-				{ method: 'get' });
+		showLoadingSuggestions();
+		new Ajax.Updater('suggestions', buildGroupURL('suggestions'),
+				{ method: 'post', 
+				  parameters: { action: 'remove_suggestion', suggestion: key } });
 	}
 }
 
 function removeComment(key) {
 	var answer = confirm("Are you sure?");
 	if (answer) {
-		new Ajax.Updater('suggestions', 
-				'/suggestions?remove_comment=' + key,
-				{ method: 'get' });
+		showLoadingSuggestions();
+		new Ajax.Updater('suggestions', buildGroupURL('suggestions'),
+				{ method: 'post', 
+				  parameters: { action: 'remove_comment', comment: key } });
 	}
 }
 

@@ -74,10 +74,10 @@ def is_morning():
 	now = datetime.now(Eastern)
 	return now.hour < 14
 	
-def can_vote(userinfo):
+def can_vote(userinfo, group):
 	def can_vote_for_day(day):
 		return (not userinfo.voted_for_day(day)
-			    and Suggestion.get_for_day(day, userinfo.group).count() > 0)
+			    and Suggestion.get_for_day(day, group).count() > 0)
 	
 	if is_morning():
 		return can_vote_for_day(date.today() - timedelta(1))
