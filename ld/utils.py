@@ -65,7 +65,7 @@ def authorize_group(f):
 
 		
 def incr(var, val = 1): 
-	return 1 if var == None else var + val
+	return val if var == None else var + val
 
 def is_empty(str): 
 	return str == "" or str == None	

@@ -191,7 +191,7 @@ class RatingHandler(LDContextHandler):
 		restaurant.add_vote(rating)
 		restaurant.put()
 						
-		if author:
+		if author and author.user != self.currentuser.user:
 			author.karma = incr(author.karma, rating)
 			author.put()
 				
@@ -245,7 +245,7 @@ class RatingHandler(LDContextHandler):
 		res_keys = [ r.key() for r in restaurants ]
 
 		other_restaurants = []
-		all_restaurants = Restaurant.all().order('name')
+		all_restaurants = Restaurant.gql("WHERE group=:1 ORDER BY name", self.currentgroup)
 		for res in all_restaurants:
 			if res.key() not in res_keys:
 				other_restaurants.append(res)
@@ -256,13 +256,14 @@ class RatingHandler(LDContextHandler):
 					'other_restaurants': other_restaurants }			
 		self.render('rate', context)		
 
-class StatsHandler(TemplateHelperHandler):
+class StatsHandler(LDContextHandler):
+	@authorize_group
 	def get(self):
 		context = { 
-			'karma_ranking': Restaurant.all().order('-karma').fetch(10),
-			'lunchcount_ranking': Restaurant.all().order('-lunchcount').fetch(10),
-			'best_user': UserInfo.all().order('-karma').fetch(5),
-			'biggest_eater': UserInfo.all().order('-lunchcount').fetch(5)			
+			'karma_ranking': Restaurant.gql('WHERE group=:1 ORDER BY karma DESC LIMIT 10', self.currentgroup),
+			'lunchcount_ranking': Restaurant.gql('WHERE group=:1 ORDER BY lunchcount DESC LIMIT 10', self.currentgroup),
+			'best_user': self.currentgroup.get_best_users(),
+			'biggest_eater': self.currentgroup.get_biggest_users()			
 			}
 							
 		self.render('stats', context)

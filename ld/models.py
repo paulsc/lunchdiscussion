@@ -39,15 +39,15 @@ class UserInfo(db.Model):
 	
 def get_active_crew(group):
 	one_week_ago = datetime.now().date() - timedelta(DEAD_LIMIT)
-	f = lambda ref: ref.user.lastposted >= one_week_ago
-	userrefs = filter(f, group.userrefs)
-	return [ ref.user for ref in userrefs ]
+	f = lambda user: user.lastposted >= one_week_ago
+	users = [ ref.user for ref in group.userrefs ]
+	return filter(f, users)
 
 def get_dead_crew(group):
 	one_week_ago = datetime.now().date() - timedelta(DEAD_LIMIT)
-	f = lambda ref: ref.user.lastposted < one_week_ago
-	userrefs = filter(f, group.userrefs)
-	return [ ref.user for ref in userrefs ]
+	f = lambda user: user.lastposted < one_week_ago
+	users = [ ref.user for ref in group.userrefs ]
+	return filter(f, users)
 		
 RE_GROUPNAME = "\w{3,}"
 class Group(db.Model):
@@ -56,6 +56,18 @@ class Group(db.Model):
 	#address = db.TextProperty()
 	creator = db.ReferenceProperty(UserInfo)
 	created = db.DateProperty(auto_now_add=True)		
+	
+	def get_best_users(self):
+		users = [ ref.user for ref in self.userrefs ]
+		compare = lambda x, y: cmp(y.karma, x.karma)
+		users.sort(compare)
+		return users[:5]
+	
+	def get_biggest_users(self):
+		users = [ ref.user for ref in self.userrefs ]
+		compare = lambda x, y: cmp(y.lunchcount, x.lunchcount)
+		users.sort(compare)
+		return users[:5]
 	
 class GroupUserInfo(db.Model):
 	group = db.ReferenceProperty(Group, required=True, collection_name='userrefs')

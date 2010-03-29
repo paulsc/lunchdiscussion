@@ -24,6 +24,18 @@ indexes:
 - kind: Restaurant
   properties:
   - name: group
+  - name: karma
+    direction: desc
+
+- kind: Restaurant
+  properties:
+  - name: group
+  - name: lunchcount
+    direction: desc
+
+- kind: Restaurant
+  properties:
+  - name: group
   - name: name
 
 - kind: RestaurantComment
