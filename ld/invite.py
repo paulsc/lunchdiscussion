@@ -47,7 +47,8 @@ class InviteLinkHandler(LDContextHandler):
 			
 		relationship = GroupUserInfo.gql("WHERE user=:1 AND group=:2", self.currentuser, invite.group).get()
 		if relationship == None:
-			relationship = GroupUserInfo(user=self.currentuser, group=invite.group)
+			relationship = GroupUserInfo(user=self.currentuser, group=invite.group, 
+										 groupname=invite.group.shortname)
 			relationship.put()
 			
 		invite.delete()

@@ -36,18 +36,22 @@ class UserInfo(db.Model):
 	lunchcount = db.IntegerProperty()
 	def voted_for_day(self, day):
 		return self.lastvoted == day
+
+def _get_crew_helper(group, compare):
+	def is_empty(str): 
+		return str == "" or str == None	
+	one_week_ago = datetime.now().date() - timedelta(DEAD_LIMIT)
+	f = lambda user: (not is_empty(user.nickname)) and compare(user, one_week_ago)
+	users = [ ref.user for ref in group.userrefs ]
+	return filter(f, users)
 	
 def get_active_crew(group):
-	one_week_ago = datetime.now().date() - timedelta(DEAD_LIMIT)
-	f = lambda user: user.lastposted >= one_week_ago
-	users = [ ref.user for ref in group.userrefs ]
-	return filter(f, users)
-
+	compare = lambda user, date: user.lastposted >= date
+	return _get_crew_helper(group, compare)
+	
 def get_dead_crew(group):
-	one_week_ago = datetime.now().date() - timedelta(DEAD_LIMIT)
-	f = lambda user: user.lastposted < one_week_ago
-	users = [ ref.user for ref in group.userrefs ]
-	return filter(f, users)
+	compare = lambda user, date: user.lastposted < date
+	return _get_crew_helper(group, compare)
 		
 RE_GROUPNAME = "\w{3,}"
 class Group(db.Model):
@@ -72,7 +76,7 @@ class Group(db.Model):
 class GroupUserInfo(db.Model):
 	group = db.ReferenceProperty(Group, required=True, collection_name='userrefs')
 	user = db.ReferenceProperty(UserInfo, required=True, collection_name='grouprefs')
-	groupname = db.StringProperty() # for quick access
+	groupname = db.StringProperty(required=True) # for quick access
 
 class Suggestion(db.Model):
 	author = db.ReferenceProperty(UserInfo)
