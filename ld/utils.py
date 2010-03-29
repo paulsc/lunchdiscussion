@@ -49,7 +49,7 @@ def authorize_group(f):
 	@wraps(f)
 	def wrapper(self, *args, **kwds):
 		if self.currentgroup == None:
-			self.error(404)
+			self.redirect('/')
 			return
 
 		if self.currentuser == None:

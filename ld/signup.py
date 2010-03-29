@@ -53,4 +53,4 @@ class SignupHandler(LDContextHandler):
 			self.render('edit_profile')
 			return
 		
-		self.redirect("/")
+		self.redirect("/" + group.shortname)
