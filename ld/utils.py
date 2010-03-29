@@ -31,7 +31,9 @@ class LDContextHandler(TemplateHelperHandler):
 		
 		super(LDContextHandler, self).initialize(request, response)
 
-	def render(self, template_name, context = {}, notification=None):
+	def render(self, template_name, context = None, notification=None):
+		if context == None:
+			context = {}
 		context['currentuser'] = self.currentuser
 		context['currentgroup'] = self.currentgroup
 		context['logout_url'] = users.create_logout_url('/')

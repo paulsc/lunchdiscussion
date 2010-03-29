@@ -5,7 +5,7 @@
 
 	<h3>invite someone to: {{ currentgroup.fullname }}</h3>
 	
-	<form action="/invite" method="post">
+	<form action="/{{ currentgroup.shortname }}/invite" method="post">
 	
 		email: <input type="text" name="email"/>
 		<input type="submit" value="go"/>

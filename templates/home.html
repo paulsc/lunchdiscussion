@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block extramenu %}
-<a href="/invite">invite</a> | 
+<a href="/{{ currentgroup.shortname }}/invite">invite</a> | 
 <a href="/{{ currentgroup.shortname }}/stats">stats</a> | 
 <a href="/profile">{{ currentuser.nickname }}</a> |
 {% endblock %}
