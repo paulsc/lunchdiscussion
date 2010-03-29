@@ -64,10 +64,12 @@ class RestaurantHandler(LDContextHandler):
 		self.get()
 
 class SuggestionHandler(LDContextHandler):
+	@authorize_group
 	def get(self):
 		context = { 'suggestions': Suggestion.get_todays(self.currentgroup) }
 		self.render('suggestions', context)
 
+	@authorize_group
 	def post(self):
 		action = cgi.escape(self.request.get('action'))
 		
@@ -150,7 +152,8 @@ class ProfileHandler(LDContextHandler):
 		userinfo.put()
 		self.redirect('/')
 		
-class RestaurantInfoHandler(TemplateHelperHandler):
+class RestaurantInfoHandler(LDContextHandler):
+	@authorize_group
 	def get(self):
 		restaurant = db.get(cgi.escape(self.request.get('restaurant')))
 		context = { 'name': restaurant.name,
@@ -195,7 +198,8 @@ class RatingHandler(LDContextHandler):
 		self.currentuser.lastvoted = date
 		self.currentuser.lunchcount = incr(self.currentuser.lunchcount)
 		self.currentuser.put()
-	
+
+	@authorize_group
 	def post(self):
 		cancel = self.request.get('cancel')
 		day = date.fromordinal(int(self.request.get('day')))
@@ -225,8 +229,9 @@ class RatingHandler(LDContextHandler):
 			comment.put()
 
 		self.add_rating(day, restaurant, author, rating)
-		self.render('thanks')
+		self.render_plain('thanks')
 
+	@authorize_group
 	def get(self):
 		if is_morning():
 			day = datetime.now() - timedelta(1)

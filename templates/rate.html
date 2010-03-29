@@ -28,7 +28,7 @@
 		<center>
 		<h3>where did you eat {{ day_title }}?</h3>
 		
-		<form id="form" action="/rate" method="post" onSubmit="return verify()">
+		<form id="form" action="/{{ currentgroup.shortname }}/rate" method="post" onSubmit="return verify()">
 		<table><tr><td>
 		{% for res in restaurants %}
 			<input type="radio" name="restaurant" value="{{ res.key }}" /> 

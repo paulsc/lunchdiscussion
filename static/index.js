@@ -55,18 +55,9 @@ function removeComment(key) {
 	}
 }
 
-function addRating(restaurantKey, rating) {
-	new Ajax.Request('/rate?restaurant=' + restaurantKey + '&rating=' + rating, { 
-			method: 'get',
-		  	onSuccess: function(transport) {
-		  		alert('okay thanks');
-		  	}
-		 });
-}
-
 function showRatingPopup() {
 	myLightWindow.activateWindow({
-			href: 'rate', 
+			href: buildGroupURL('rate'), 
 			title: 'Hey, how was lunch ?', 
 			height: 400,
 			width: 600,
@@ -83,7 +74,7 @@ function showProfilePopup(user) {
 
 function showRestaurantPopup(restaurant) {
 	myLightWindow.activateWindow({
-			href: '/restaurant-info?restaurant=' + restaurant, 
+			href: buildGroupURL('restaurant-info?restaurant=' + restaurant), 
 			height: 400,
 			width: 500,
 	});
