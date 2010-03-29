@@ -57,7 +57,7 @@ class InviteLinkHandler(LDContextHandler):
 			self.render('edit_profile')
 			return
 		
-		self.redirect('/')
+		self.redirect('/' + invite.group.shortname)
 			
 			
 		
