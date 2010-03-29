@@ -11,7 +11,7 @@ from utils import TemplateHelperHandler, incr, is_morning,\
     notify_suggestion, post_comment
 
 from models import UserInfo, Suggestion, Restaurant, RestaurantComment
-from ld.models import get_active_crew, get_dead_crew, Comment
+from ld.models import get_active_crew, get_dead_crew
 from ld.utils import LDContextHandler, can_vote, authorize_group
 
 class IndexHandler(LDContextHandler):
@@ -31,6 +31,7 @@ class HomeHandler(LDContextHandler):
 	@authorize_group
 	def get(self):
 		group = self.currentgroup
+		
 		context = { 'ask_to_rate' : can_vote(self.currentuser, self.currentgroup),
 					'active_crew': get_active_crew(group),
 					'dead_crew': get_dead_crew(group), 

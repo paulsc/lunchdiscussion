@@ -36,16 +36,18 @@ class UserInfo(db.Model):
 	lunchcount = db.IntegerProperty()
 	def voted_for_day(self, day):
 		return self.lastvoted == day
-
+	
 def get_active_crew(group):
-	one_week_ago = datetime.now() - timedelta(DEAD_LIMIT)
-	return UserInfo.gql('WHERE lastposted >= DATE(:1, :2, :3) AND group = :4', 
-				one_week_ago.year, one_week_ago.month, one_week_ago.day, group)
+	one_week_ago = datetime.now().date() - timedelta(DEAD_LIMIT)
+	f = lambda ref: ref.user.lastposted >= one_week_ago
+	userrefs = filter(f, group.userrefs)
+	return [ ref.user for ref in userrefs ]
 
 def get_dead_crew(group):
-	one_week_ago = datetime.now() - timedelta(DEAD_LIMIT)
-	return UserInfo.gql('WHERE lastposted < DATE(:1, :2, :3) AND group = :4', 
-					one_week_ago.year, one_week_ago.month, one_week_ago.day, group)
+	one_week_ago = datetime.now().date() - timedelta(DEAD_LIMIT)
+	f = lambda ref: ref.user.lastposted < one_week_ago
+	userrefs = filter(f, group.userrefs)
+	return [ ref.user for ref in userrefs ]
 		
 RE_GROUPNAME = "\w{3,}"
 class Group(db.Model):
