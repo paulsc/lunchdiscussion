@@ -14,7 +14,7 @@ body {
 
 .notification {
 	text-align: center;
-	background-color: #fff384;
+	background-color: #F2BB80;
 	padding: 5px;
 	margin: 5px;
 	font-size: 14px
@@ -70,7 +70,7 @@ img {
 }
 
 a {
-	color: blue;
+	color: #242133;
 	text-decoration: none;
 }
 
@@ -79,7 +79,7 @@ a:hover {
 }
 
 a:visited {
-	color: blue;
+	color: #242133;
 }
 
 .login { 
