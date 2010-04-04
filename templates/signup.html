@@ -1,0 +1,19 @@
+{% extends "header.html" %}
+
+{% block main %}
+
+	<h2>New to lunchdiscussion.com?</h2>
+
+	You can:
+	<ul>
+		<form action="/signup" method="post">
+		<li> create a new lunchdiscussion group: 
+			<br/>http://www.lunchdiscussion.com/
+			<input type="text" name="group_shortname">
+			<input type="submit" value="let's go">
+		</form>
+	
+	<li> join an existing group
+	</ul>
+
+{% endblock %}

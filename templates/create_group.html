@@ -1,0 +1,21 @@
+{% extends "header.html" %}
+
+{% block main %}
+
+	<h2>create lunchdiscussion group</h2>
+
+	<i>{{ group_shortname }}</i> is available! One more step:
+	<br/><br/>
+	
+	<form action="/signup" method="post">
+		<input type="hidden" name="group_shortname" value="{{ group_shortname }}">
+		
+		Group full name: <input type="text" name="group_fullname" size="50">
+		
+		<br/><br/>
+			
+		<input type="submit" value="create group"/>
+	
+	</form> 
+
+{% endblock %}

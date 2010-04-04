@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+		<div id="main">
+		
+			<div class="login">
+				<small>
+					{% block extramenu %}{% endblock %}	
+					{% if logout_url %}
+						<a href="{{ logout_url }}">logout</a>
+					{% endif %}
+				</small>
+			</div>
+
+			<div id="logo">
+				<a href="/" alt="home"><img src="/images/logo.png" alt="logo" width="280" /></a>
+			</div>
+		
+			{% block notification %}
+				{% if notification %}
+					<div class="notification">
+						{{ notification }}
+					</div>
+				{% endif %}
+			{% endblock %}
+		
+			{% block main %}{% endblock %}
+		
+		</div>
+
+{% endblock %}

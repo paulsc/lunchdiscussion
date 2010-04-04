@@ -12,9 +12,9 @@ body {
 	padding-top: 10px;
 }
 
-#notification {
+.notification {
 	text-align: center;
-	background-color: #fff384;
+	background-color: #FFEF92;
 	padding: 5px;
 	margin: 5px;
 	font-size: 14px
@@ -25,6 +25,10 @@ body {
 	color: #aaaaaa;
 	padding: 30px;
 	border: 1px solid #dddddd;
+}
+
+.loading_suggestions {
+	opacity: .2;	
 }
 
 .suggestion {
@@ -66,7 +70,7 @@ img {
 }
 
 a {
-	color: blue;
+	color: #242133;
 	text-decoration: none;
 }
 
@@ -75,7 +79,7 @@ a:hover {
 }
 
 a:visited {
-	color: blue;
+	color: #242133;
 }
 
 .login { 
