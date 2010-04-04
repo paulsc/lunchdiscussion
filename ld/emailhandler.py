@@ -36,17 +36,31 @@ class IncomingMailHandler(InboundMailHandler):
 
 class EmailTaskHandler(webapp.RequestHandler):
 	def post(self):
-		suggestion = db.get(self.request.get("suggestion"))
-		target = db.get(self.request.get("target"))
-		message = self.request.get("message")
+		suggestion = db.get(self.request.get('suggestion'))
+		targets = self.request.get('targets').split(',')
+		message = self.request.get('message')
+		reply_to = (self.request.get('reply_to') == 'true')
+		
+		targets = [ db.get(key) for key in targets ]
 
-		logging.info("email task to: %s \"%s\"" % (str(target.email), message))
+		emails = [ user.email for user in targets ]
+		emails = ",".join(emails)
+
+		logging.info("email task to: %s \"%s\"" % (emails, message))
 		email = mail.EmailMessage(sender="discuss@lunchdiscussion.com")
 		email.subject = "Lunchdiscussion.com update"
 		email.body = "www.lunchdiscussion.com update\n" + message
-		email.to = "%s <%s>" % (target.nickname, target.email)
-		#email.to = "paul <paul167@gmail.com>"
-		reply_to = ReplyTo(user=target, suggestion=suggestion, uuid=uuid.uuid4().hex)
-		email.reply_to = str(reply_to)
-		email.send()
-		reply_to.put()
+		
+		if reply_to:
+			for target in targets:
+				email.to = "%s <%s>" % (target.nickname, target.email)
+				#email.to = "paul <paul167@gmail.com>"
+				reply_to = ReplyTo(user=target, suggestion=suggestion, uuid=uuid.uuid4().hex)
+				email.reply_to = str(reply_to)
+				reply_to.put()
+				email.send()
+		else:
+			emails = [ "%s <%s>" % (target.nickname, target.email) for target in targets ]
+			email.to = ', '.join(emails)
+			email.send()
+

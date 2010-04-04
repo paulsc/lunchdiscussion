@@ -15,7 +15,7 @@ def main():
 										  ('/signup', SignupHandler),
 										  ('/profile', ProfileHandler),
 										  ('/avatar', AvatarHandler),
-										  ("/emailtask", EmailTaskHandler),
+										  ("/task/email", EmailTaskHandler),
 										  IncomingMailHandler.mapping(),
 										  ('/cron/daily', DailyCronHandler),
 										  ('/%s/stats' % RE_GROUPNAME, StatsHandler),
