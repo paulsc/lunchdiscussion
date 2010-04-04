@@ -46,10 +46,12 @@ class EmailTaskHandler(webapp.RequestHandler):
 		emails = [ user.email for user in targets ]
 		emails = ",".join(emails)
 
+		grouplink = 'www.lunchdiscussion.com/' + suggestion.group.shortname
+
 		logging.info("email task to: %s \"%s\"" % (emails, message))
 		email = mail.EmailMessage(sender="discuss@lunchdiscussion.com")
 		email.subject = "Lunchdiscussion.com update"
-		email.body = "www.lunchdiscussion.com update\n" + message
+		email.body = '%s update\n%s' % (grouplink, message)
 		
 		if reply_to:
 			for target in targets:
