@@ -1,5 +1,5 @@
 application: lunchdiscuss
-version: groups
+version: groups-oneemail
 runtime: python
 api_version: 1
 
@@ -17,7 +17,7 @@ handlers:
   script: main.py
   login: admin
 
-- url: /emailtask
+- url: /task/email
   script: main.py
   login: admin
 
