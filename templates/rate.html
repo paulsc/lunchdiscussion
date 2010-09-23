@@ -25,8 +25,7 @@
 			}
 		</script>
 
-		<center>
-		<h3>where did you eat {{ day_title }}?</h3>
+		<h3>Where did you eat {{ day_title }}?</h3>
 		
 		<form id="form" action="/{{ currentgroup.shortname }}/rate" method="post" onSubmit="return verify()">
 		<table><tr><td>
@@ -48,7 +47,7 @@
 		
 		</table>
 
-		<h3>how was it?</h3>
+		<h3>How was it?</h3>
 
 		<input type="radio" name="rating" value="-2" /> very bad
 		<input type="radio" name="rating" value="-1" /> bad
@@ -57,17 +56,15 @@
 		<input type="radio" name="rating" value="2" /> FTW!!
 		<br/><br/>
 
-		comment ? what did you get?<br/><textarea name="comment" rows="4" cols="50"></textarea>
+		Any comments? What did you have?<br/><textarea name="comment" rows="4" cols="53"></textarea>
 		<br/><br/>
 
 		<input type="hidden" name="cancel" value="false" />
 		<input type="hidden" name="day" value="{{ day }}" />
-		<input type="button" value="didn't eat" onclick="cancelClick()"/>
+		<input type="button" value="I didn't eat" onclick="cancelClick()"/>
 		<input type="button" value="submit" onclick="submitClick()"/>
 
 		</form>
 		
-
-		</center>
 
 {% endblock %}

@@ -58,9 +58,9 @@ function removeComment(key) {
 function showRatingPopup() {
 	myLightWindow.activateWindow({
 			href: buildGroupURL('rate'), 
-			title: 'Hey, how was lunch ?', 
+			title: '', 
 			height: 400,
-			width: 600,
+			width: 400,
 	});
 }
 
