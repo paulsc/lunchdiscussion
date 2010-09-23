@@ -36,11 +36,14 @@ class IncomingMailHandler(InboundMailHandler):
 
 class EmailTaskHandler(webapp.RequestHandler):
 	def post(self):
+		if self.request.get('targets') == '':
+			return
+		
 		suggestion = db.get(self.request.get('suggestion'))
 		targets = self.request.get('targets').split(',')
 		message = self.request.get('message')
 		reply_to = (self.request.get('reply_to') == 'true')
-		
+
 		targets = [ db.get(key) for key in targets ]
 
 		emails = [ user.email for user in targets ]
