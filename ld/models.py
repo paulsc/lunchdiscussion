@@ -43,7 +43,9 @@ def _get_crew_helper(group, compare=lambda user, date: True):
 	one_week_ago = datetime.now().date() - timedelta(DEAD_LIMIT)
 	f = lambda user: (not is_empty(user.nickname)) and compare(user, one_week_ago)
 	users = [ ref.user for ref in group.userrefs ]
-	return filter(f, users)
+	crew = filter(f, users)
+	crew.sort(key = lambda x: x.karma, reverse=True)
+	return crew
 	
 def get_active_crew(group):
 	compare = lambda user, date: user.lastposted >= date

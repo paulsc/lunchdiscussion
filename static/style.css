@@ -107,3 +107,8 @@ a:visited {
 	/*float: left;*/
 }
 
+.karma {
+	font-size: 11px;
+	opacity: 0.5;	
+}
+

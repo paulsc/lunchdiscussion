@@ -33,10 +33,13 @@
 							<a href="/profile">
 						{% endifnotequal %}
 						{% if member.avatar %}
-							<img src="/avatar?user={{ member.key }}" alt="avatar" height="32"/>{% else %}
-							<img src="/static/avatar.jpg" alt="avatar" height="32"/>{% endif %}</a>
+							<img src="/avatar?user={{ member.key }}" alt="avatar" height="32"/>
+						{% else %}
+							<img src="/static/avatar.jpg" alt="avatar" height="32"/>
+						{% endif %}
+						</a>
 						<br/>
-						<small>{{ member.nickname }}</small>
+						<small>{{ member.nickname }}</small><br/><span class="karma">{{ member.karma|default:"0" }}</span>
 						</td>
 					{% endfor %}
 					{% for member in dead_crew %}
