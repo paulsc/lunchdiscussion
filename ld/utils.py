@@ -9,7 +9,7 @@ from timezone import Eastern
 
 from models import UserInfo, Suggestion, Comment
 from google.appengine.api import users
-from ld.models import get_active_crew, Group
+from ld.models import get_all_crew, Group
 from functools import wraps
 
 class TemplateHelperHandler(webapp.RequestHandler):
@@ -98,7 +98,7 @@ def post_comment(text, author, suggestion):
 def send_notification(message, suggestion, exclude_user):
 	def f(i): 
 		return i.nickname != "" and i.user != exclude_user and i.email != 'none'
-	targets = filter(f, get_active_crew(suggestion.group))
+	targets = filter(f, get_all_crew(suggestion.group))
 	#targets = UserInfo.gql('WHERE nickname = :1', 'paul')
 	targets = [ str(target.key()) for target in targets ]
 	targets = ",".join(targets)

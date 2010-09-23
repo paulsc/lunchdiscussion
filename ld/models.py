@@ -37,7 +37,7 @@ class UserInfo(db.Model):
 	def voted_for_day(self, day):
 		return self.lastvoted == day
 
-def _get_crew_helper(group, compare):
+def _get_crew_helper(group, compare=lambda user, date: True):
 	def is_empty(str): 
 		return str == "" or str == None	
 	one_week_ago = datetime.now().date() - timedelta(DEAD_LIMIT)
@@ -52,6 +52,9 @@ def get_active_crew(group):
 def get_dead_crew(group):
 	compare = lambda user, date: user.lastposted < date
 	return _get_crew_helper(group, compare)
+
+def get_all_crew(group):
+	return _get_crew_helper(group)
 		
 RE_GROUPNAME = "\w{3,}"
 class Group(db.Model):
