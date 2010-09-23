@@ -2,6 +2,15 @@
 
 {% block extrahead %}
 		<script type="text/javascript" src="/static/index.js"></script>
+
+		{% if ask_to_rate %}
+			<script type="text/javascript">
+				Event.observe(window, "load", function() {
+					showRatingPopup();
+				});
+			</script>
+		{% endif %}
+		
 {% endblock %}
 
 {% block extramenu %}
@@ -46,12 +55,6 @@
 					{% endfor %}					
 			</tr></table>	
 		</div>
-	
-		{% if ask_to_rate %}
-			<div class="notification">
-				<a href="#" onclick="showRatingPopup()">Did you go to lunch? VOTE MOTHERFUCKER!</a>
-			</div>
-		{% endif %}
 	
 		<div id="discussion" class="clear"/> 
 			
