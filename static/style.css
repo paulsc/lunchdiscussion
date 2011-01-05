@@ -1,5 +1,5 @@
 body {
-	font-family: Arial, Helvetica, sans-serif;;
+	font-family: Arial, Helvetica, sans-serif;
 }
 
 #main {
@@ -110,5 +110,13 @@ a:visited {
 .karma {
 	font-size: 11px;
 	opacity: 0.5;	
+}
+
+#profile {
+	float: left;
+}
+
+#groups {
+	
 }
 

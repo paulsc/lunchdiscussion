@@ -2,47 +2,50 @@
 
 {% block main %}
 
-		<center>
-			<h2>profile: {{ user.email }}</h2>
-
+    <style type="text/css">
+    
+        #row {
+            display:block;
+            margin:5px;
+        }
+    </style>
+    
+    <div id="profile">
+        <h2>My Profile</h2>
+        
+        {% if not userinfo %}
+			<small>fill in your profile to get started</small>
+		{% else %}{% if userinfo.avatar %}
+		    <img src="/avatar" alt="avatar">
+		{% endif %}{% endif %}
+		
+		<span id="row">Name: {{ user.email }}</span>
+		
+		<form action="/profile" enctype="multipart/form-data" method="post">
 			{% if not userinfo %}
-				<small>fill in your profile to get started</small>
-				<br/>
-				<br/>
-				{% else %}
-					{% if userinfo.avatar %}
-						<img src="/avatar" alt="avatar">
-						<br/>
-						<br/>
-					{% endif %}
+				<input type="hidden" name="first_login" value="true" />
 			{% endif %}
-	
-			<form action="/profile" enctype="multipart/form-data" method="post">
-				{% if not userinfo %}
-					<input type="hidden" name="first_login" value="true" />
-				{% endif %}
-				
-				<table>
-					<tr>
-						<td align="right">nickname:
-						<td><input type="text" name="nickname" value="{{ userinfo.nickname }}" />
-					<tr>	
-						<td align="right">email address for notifications:
-						<td><input type="text" name="email" value="{{ userinfo.email }}" />
-					<tr>
-						<td align="right">change avatar:
-						<td><input type="file" name="avatar">
-					{% if userinfo %}
-					<tr>
-						<td align="right">karma:
-						<td>{% firstof userinfo.karma "0" %}
-					{% endif %}
-					<tr height="70px">
-						<td colspan="2" align="middle"><input type="submit" value="update"/>
-				</table>
-
-			</form>
-
-		</center>
-
+			
+			<span id="row">Nickname: <input type="text" name="nickname" value="{{ userinfo.nickname }}"/></span>
+			<span id="row">Notifications: <input type="text" name="email" value="{{ userinfo.email }}"/></span>
+			<span id="row">Avatar: <input type="file" name="avatar"/></span>
+			
+			{% if userinfo %}
+			    <span id="row">Karma: {% firstof userinfo.karma "0" %}</span>
+			{% endif %}
+			
+			<input type="submit" value="Update"/>
+		</form>
+    </div>
+    
+    {% if userinfo %}
+        <div id="groups">
+            <h2>My Groups</h2>
+            <ul style="list-style-position: inside; ">
+            {% for group in currentuser.grouprefs %}
+                <li><a href="/{{ group.groupname }}">{{ group.groupname }}</a>
+            {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
 {% endblock %}
