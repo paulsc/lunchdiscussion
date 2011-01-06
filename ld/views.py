@@ -1,18 +1,13 @@
+from datetime import datetime, date, timedelta
+from google.appengine.api import images, users
+from google.appengine.ext import db
+from ld.models import get_active_crew, get_dead_crew, get_all_crew
+from ld.utils import LDContextHandler, can_vote, authorize_group
+from models import UserInfo, Suggestion, Restaurant, RestaurantComment
+from utils import TemplateHelperHandler, incr, is_morning, notify_suggestion, \
+	post_comment
 import cgi
 import logging
-
-from google.appengine.ext import db
-from google.appengine.api import users
-from google.appengine.api import images
-
-from datetime import datetime, date, timedelta
-
-from utils import TemplateHelperHandler, incr, is_morning,\
-    notify_suggestion, post_comment
-
-from models import UserInfo, Suggestion, Restaurant, RestaurantComment
-from ld.models import get_active_crew, get_dead_crew
-from ld.utils import LDContextHandler, can_vote, authorize_group
 
 class IndexHandler(LDContextHandler):
 	def get(self):
@@ -267,3 +262,15 @@ class StatsHandler(LDContextHandler):
 			}
 							
 		self.render('stats', context)
+		
+class AdminHandler(LDContextHandler):
+	@authorize_group
+	def get(self):
+		user = self.currentuser
+		group = self.currentgroup
+		
+		if group.creator.user == user.user:
+			context = { 'crew': get_all_crew(group) }
+			self.render('admin', context)
+		else:
+			self.error(403)

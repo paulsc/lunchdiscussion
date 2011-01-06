@@ -3,7 +3,7 @@ from google.appengine.ext import webapp
 
 from ld.views import IndexHandler, ProfileHandler, RestaurantHandler,\
 	RestaurantInfoHandler, SuggestionHandler, AvatarHandler, RatingHandler,\
-	StatsHandler, HomeHandler
+	StatsHandler, HomeHandler, AdminHandler
 from ld.emailhandler import EmailTaskHandler, IncomingMailHandler
 from ld.cron import DailyCronHandler
 from ld.signup import SignupHandler
@@ -24,6 +24,7 @@ def main():
 										  ('/%s/suggestions' % RE_GROUPNAME, SuggestionHandler),
 										  ('/%s/rate' % RE_GROUPNAME, RatingHandler),
 										  ('/%s/invite' % RE_GROUPNAME, InviteHandler),
+										  ('/%s/admin' % RE_GROUPNAME, AdminHandler),
 										  ('/invite/(\w+)', InviteLinkHandler),
 										  ('/%s/?' % RE_GROUPNAME, HomeHandler)
 										  ],

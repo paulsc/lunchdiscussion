@@ -1,0 +1,15 @@
+{% extends "header.html" %}
+
+{% block main %}
+
+<h1>{{ currentgroup.fullname }}</h1>
+
+{% for member in crew %}
+    {% ifnotequal member.user currentuser.user %}
+        USER: {{ member.nickname }}<br>
+    {% else %}
+        SELF: {{ member.nickname }}<br>
+    {% endifnotequal %}
+{% endfor %}
+
+{% endblock %}
