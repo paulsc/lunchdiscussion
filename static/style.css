@@ -112,11 +112,63 @@ a:visited {
 	opacity: 0.5;	
 }
 
-#profile {
-	float: left;
+.profileLayout {
+    font-family: "Lucida Grande", "Lucida Sans Unicode", 
+        Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    
+    width:512px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-#groups {
-	
+.profileLayout h1 {
+    font-size: 16px;
+}
+
+.profileLayout h2 {
+    font-size: 11px;
+    font-weight: normal;
+    font-style: normal;
+    color:#666666;
+    border-bottom:solid 1px #a1a1a1;
+    padding-bottom:10px;
+}
+
+.profileLayout br {
+    clear: left;
+}
+
+.formLayout label, .formLayout input {
+    display: block;
+    float: left;
+    margin-bottom: 10px;
+}
+
+.formLayout label, .formLayout span {
+    width: 180px;
+    text-align: right;
+    padding-right: 10px;
+}
+
+.formLayout input {
+    width: auto;
+}
+
+.formLayout label {
+    font-size: 12px;
+}
+
+.formLayout span {
+    color:#666666;
+    display:block;
+    font-size:11px;
+    text-align:right;
+}
+
+.formLayout #avatar {
+    border: solid 2px #a1a1a1;
+    padding: 10px;
+    margin-bottom: 15px;
 }
 

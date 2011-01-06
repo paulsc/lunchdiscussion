@@ -1,51 +1,61 @@
 {% extends "header.html" %}
 
 {% block main %}
-
-    <style type="text/css">
-    
-        #row {
-            display:block;
-            margin:5px;
-        }
-    </style>
-    
-    <div id="profile">
-        <h2>My Profile</h2>
-        
-        {% if not userinfo %}
-			<small>fill in your profile to get started</small>
-		{% else %}{% if userinfo.avatar %}
-		    <img src="/avatar" alt="avatar">
-		{% endif %}{% endif %}
-		
-		<span id="row">Name: {{ user.email }}</span>
-		
-		<form action="/profile" enctype="multipart/form-data" method="post">
-			{% if not userinfo %}
-				<input type="hidden" name="first_login" value="true" />
-			{% endif %}
+    <div class="profileLayout">
+        <div class="formLayout">
+            <h1>My Profile</h1>
+            <h2>Your <a href="http://www.lunchdiscussion.com">lunchdiscussion.com</a> Profile</h2>
+            <form action="/profile" enctype="multipart/form-data" method="post">
+                {% if not userinfo %}
+    				<input type="hidden" name="first_login" value="true" />
+    			{% endif %}
 			
-			<span id="row">Nickname: <input type="text" name="nickname" value="{{ userinfo.nickname }}"/></span>
-			<span id="row">Notifications: <input type="text" name="email" value="{{ userinfo.email }}"/></span>
-			<span id="row">Avatar: <input type="file" name="avatar"/></span>
+    			<label>&nbsp;</label>
+    			{% if not userinfo %}
+        			<small>fill in your profile to get started</small>
+        		{% else %}{% if userinfo.avatar %}
+        		    <img id="avatar" src="/avatar" alt="avatar">
+        		{% else %}
+        		    <img id="avatar" src="/images/avatar.png" alt="avatar">
+        		{% endif %}{% endif %}
+        		<br>
+    		
+                <label>Account
+                <span>Your Account</span></label>
+                {{ user.email }}<br>
+            
+                <label>Nickname
+                <span>Your Nickname</span></label>
+                <input type="text" name="nickname" value="{{ userinfo.nickname }}"/><br>
+            
+                <label>Notifications
+                <span>Your Email for Notification</span></label>
+                <input type="text" name="email" value="{{ userinfo.email }}"/><br>
+            
+                <label>Avatar
+                <span>Choose your Avatar</span></label>
+                <input type="file" name="avatar"/><br>
+            
+                {% if userinfo %}
+    			    <label>Karma
+    			    <span>Your Karma</span>
+    			    </label>{% firstof userinfo.karma "0" %}<br>
+    			{% endif %}
 			
-			{% if userinfo %}
-			    <span id="row">Karma: {% firstof userinfo.karma "0" %}</span>
-			{% endif %}
-			
-			<input type="submit" value="Update"/>
-		</form>
-    </div>
-    
-    {% if userinfo %}
-        <div id="groups">
-            <h2>My Groups</h2>
-            <ul style="list-style-position: inside; ">
+    			<label>&nbsp;</label>
+    			<input type="submit" value="Update"/><br>
+            </form>
+        </div>
+        {% if userinfo %}
+        <div>
+            <h1>My Groups</h1>
+            <h2>Your lunch Groups</h2>
+            <ul>
             {% for group in currentuser.grouprefs %}
                 <li><a href="/{{ group.groupname }}">{{ group.groupname }}</a>
             {% endfor %}
             </ul>
         </div>
+    </div>
     {% endif %}
 {% endblock %}
