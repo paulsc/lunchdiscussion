@@ -4,10 +4,10 @@
     <div class="profileLayout">
         <div class="formLayout">
             <h1>My Profile</h1>
-            <h2>Your <a href="http://www.lunchdiscussion.com">lunchdiscussion.com</a> Profile</h2>
+            <h2>Your <a href="/">lunchdiscussion.com</a> Profile</h2>
             <form action="/profile" enctype="multipart/form-data" method="post">
     			
-    			{% if not userinfo %}
+    			{% if not userinfo.lastposted %}
             	    <input type="hidden" name="first_login" value="true" />
     		    {% endif %}
     		    
@@ -47,13 +47,13 @@
     			<input type="submit" value="Update"/><br>
             </form>
         </div>
-        {% if userinfo %}
+        {% if userinfo.lastposted %}
         <br>
         <div>
             <h1>My Groups</h1>
             <h2>Your lunch Groups</h2>
             <ul>
-            {% for group in currentuser.grouprefs %}
+            {% for group in userinfo.grouprefs %}
                 <li><a href="/{{ group.groupname }}">{{ group.groupname }}</a>
             {% endfor %}
             </ul>

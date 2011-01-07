@@ -38,7 +38,7 @@ class SignupHandler(LDContextHandler):
 		
 		userinfo = self.currentuser
 		if userinfo == None:
-			userinfo = UserInfo(user=users.get_current_user())
+			userinfo = UserInfo()
 			userinfo.put()
 		
 		group = Group(shortname=group_shortname, fullname=group_fullname,
@@ -49,8 +49,8 @@ class SignupHandler(LDContextHandler):
 									 groupname=group.shortname)
 		relationship.put()
 		
-		if is_empty(userinfo.nickname):
-			self.render('edit_profile')
+		if userinfo.lastposted == None:
+			self.redirect("/profile");
 			return
 		
 		self.redirect("/" + group.shortname)

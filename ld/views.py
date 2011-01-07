@@ -2,7 +2,7 @@ from datetime import datetime, date, timedelta
 from google.appengine.api import images, users
 from google.appengine.ext import db
 from ld.models import get_active_crew, get_dead_crew, get_all_crew, GroupUserInfo
-from ld.utils import LDContextHandler, can_vote, authorize_group
+from ld.utils import LDContextHandler, can_vote, authorize_group, is_empty
 from models import UserInfo, Suggestion, Restaurant, RestaurantComment
 from utils import TemplateHelperHandler, incr, is_morning, notify_suggestion, \
 	post_comment
@@ -13,20 +13,26 @@ import logging
 
 class IndexHandler(LDContextHandler):
 	def get(self):
-		if self.currentuser == None or self.currentuser.grouprefs.count() == 0:
+		if self.currentuser == None \
+				or self.currentuser.grouprefs.count() == 0:
 			self.redirect('/signup')
 			return
-
-		if self.currentuser.nickname == "":
+		
+		if self.currentuser.lastposted == None:
 			self.redirect('/profile')
 			return
-
+		
 		firstgroup = self.currentuser.grouprefs.get().group
 		self.redirect('/' + firstgroup.shortname)
 		
 class HomeHandler(LDContextHandler):
 	@authorize_group
 	def get(self):
+		
+		if self.currentuser.lastposted == None:
+			self.redirect('/profile')
+			return
+		
 		group = self.currentgroup
 		
 		context = { 'ask_to_rate' : can_vote(self.currentuser, self.currentgroup),
@@ -119,7 +125,7 @@ class ProfileHandler(LDContextHandler):
 			self.render_edit()
 
 	def render_edit(self, notification=None):
-		context = { 'userinfo': self.currentuser, 'user': users.get_current_user( )}
+		context = { 'userinfo': self.currentuser, 'user': users.get_current_user()}
 		self.render('edit_profile', context, notification=notification)
 
 	def post(self):
@@ -128,23 +134,25 @@ class ProfileHandler(LDContextHandler):
 			userinfo = UserInfo()
 		
 		userinfo.nickname = cgi.escape(self.request.get('nickname'))
-		if userinfo.nickname == "":
+		if is_empty(userinfo.nickname):
 			self.render_edit("nickname can't be empty")
 			return
 		
 		email = cgi.escape(self.request.get('email'))
 		avatar = self.request.get('avatar')
 		first_login = self.request.get('first_login')
+		
 		if avatar != '':
 			avatar = images.resize(avatar, 128)
 			userinfo.avatar = db.Blob(avatar)
+			
 		if email == '':
 			email = 'none'
 		userinfo.email = email
 
 		if first_login != '':
 			userinfo.lastposted = date.today()
-			userinfo.lastvoted = date.today()
+			userinfo.lastvoted = userinfo.lastposted
 			
 		userinfo.put()
 		self.redirect('/')
