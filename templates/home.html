@@ -17,6 +17,11 @@
 <a href="/{{ currentgroup.shortname }}/invite">invite</a> | 
 <a href="/{{ currentgroup.shortname }}/stats">stats</a> | 
 <a href="/profile">my profile</a> |
+
+{% if admin %}
+<a href="/{{currentgroup.shortname}}/admin">admin</a> | 
+{% endif %}
+					
 {% endblock %}
 
 {% block main %}

@@ -40,6 +40,11 @@ class LDContextHandler(TemplateHelperHandler):
 		if notification != None:
 			context['notification'] = notification
 		
+		if self.currentgroup != None:
+			if self.currentuser.user \
+					== self.currentgroup.creator.user:
+				context['admin'] = True
+			
 		super(LDContextHandler, self).render(template_name, context)
 		
 	def render_plain(self, template_name, context=None):
