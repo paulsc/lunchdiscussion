@@ -1,11 +1,13 @@
 from datetime import datetime, date, timedelta
 from google.appengine.api import images, users
 from google.appengine.ext import db
-from ld.models import get_active_crew, get_dead_crew, get_all_crew
+from ld.models import get_active_crew, get_dead_crew, get_all_crew, GroupUserInfo
 from ld.utils import LDContextHandler, can_vote, authorize_group
 from models import UserInfo, Suggestion, Restaurant, RestaurantComment
 from utils import TemplateHelperHandler, incr, is_morning, notify_suggestion, \
 	post_comment
+from functools import wraps
+	
 import cgi
 import logging
 
@@ -264,13 +266,53 @@ class StatsHandler(LDContextHandler):
 		self.render('stats', context)
 		
 class AdminHandler(LDContextHandler):
-	@authorize_group
-	def get(self):
-		user = self.currentuser
-		group = self.currentgroup
+	def authorize_admin(f):
+		@wraps(f)
+		def wrapper(self, *args, **kwds):
+			user = self.currentuser
+			group = self.currentgroup
 		
-		if group.creator.user == user.user:
-			context = { 'crew': get_all_crew(group) }
-			self.render('admin', context)
-		else:
-			self.error(403)
+			if user == None or group == None:
+				self.error(400)
+				return
+			
+			if group.creator.user != user.user:
+				logging.error('user %s is not creator of %s' 
+								% ( user.nickname, group.shortname ))
+				self.error(403)
+				return
+			
+			return f(self, *args, **kwds)
+		return wrapper
+	
+	@authorize_group
+	@authorize_admin
+	def get(self):
+		self.render_admin()
+		
+	@authorize_group
+	@authorize_admin
+	def post(self):
+		userIds = self.request.get_all("userId")
+		if userIds != None:
+			for userId in userIds:
+				if not self.delete_user(userId):
+					logging.error('Failed to delete %s from %s' 
+								% (userId, self.currentgroup.shortname))
+			
+		self.render_admin()
+	
+	def delete_user(self, userId):
+		group = self.currentgroup
+		userToDelete = db.get(userId)
+		if userToDelete != None and userToDelete.user != group.creator.user:
+			relationship = GroupUserInfo.gql("WHERE user=:1 AND group=:2", userToDelete, group).get()
+			if relationship != None:
+				relationship.delete()
+				return True
+		return False
+	
+	def render_admin(self):
+		group = self.currentgroup
+		context = { 'crew': get_all_crew(group) }
+		self.render('admin', context)

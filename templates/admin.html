@@ -1,15 +1,40 @@
 {% extends "header.html" %}
 
+{% block extrahead %}
+    <script type="text/javascript" src="/static/index.js"></script>
+    
+    <style type="text/css">
+        #avatar {
+            height:32px;
+            vertical-align:middle;
+        }
+    </style>
+{% endblock %}
+
 {% block main %}
 
-<h1>{{ currentgroup.fullname }}</h1>
+<div class="profileLayout">
+<h1><a href="/{{currentgroup.shortname}}">{{currentgroup.shortname}}</a></h1>
+<h2>Members of {{currentgroup.fullname}}</h2>
 
-{% for member in crew %}
-    {% ifnotequal member.user currentuser.user %}
-        USER: {{ member.nickname }}<br>
-    {% else %}
-        SELF: {{ member.nickname }}<br>
-    {% endifnotequal %}
-{% endfor %}
+<form action="/{{currentgroup.shortname}}/admin" enctype="multipart/form-data" method="post">
+    {% for member in crew %}
+    <div id="margin-bottom: 10px;">
+        <input type="checkbox" name="userId" value="{{member.key}}"/>
+        <label>
+            <a href="javascript:showProfilePopup('{{member.key}}')">
+                {% if member.avatar %}
+                    <img src="/avatar?user={{member.key}}" alt="avatar" id="avatar"/>
+        		{% else %}
+                    <img src="/images/avatar.png" alt="avatar" id="avatar"/>
+        		{% endif %}
+                {{member.nickname}}
+            </a>
+        </label>
+    </div><br>
+    {% endfor %}
+    <input type="submit" value="Delete"/>
+</form>
+</div>
 
 {% endblock %}
