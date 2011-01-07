@@ -6,24 +6,25 @@
             <h1>My Profile</h1>
             <h2>Your <a href="http://www.lunchdiscussion.com">lunchdiscussion.com</a> Profile</h2>
             <form action="/profile" enctype="multipart/form-data" method="post">
-                {% if not userinfo %}
-    				<input type="hidden" name="first_login" value="true" />
-    			{% endif %}
-			
-    			<label>&nbsp;</label>
+    			
     			{% if not userinfo %}
-        			<small>fill in your profile to get started</small>
-        		{% else %}{% if userinfo.avatar %}
+            	    <input type="hidden" name="first_login" value="true" />
+    		    {% endif %}
+    		    
+    			<label>&nbsp;</label>
+        		{% if userinfo and userinfo.avatar %}
         		    <img id="avatar" src="/avatar" alt="avatar">
         		{% else %}
         		    <img id="avatar" src="/images/avatar.png" alt="avatar">
-        		{% endif %}{% endif %}
-        		<br>
-    		
-                <label>Account
-                <span>Your Account</span></label>
-                {{ user.email }}<br>
-            
+        		{% endif %}
+            	<br>
+    		    
+    		    {% if user.email %}
+                    <label>Account
+                    <span>Your Account</span></label>
+                    {{ user.email }}<br>
+                {% endif %}
+                
                 <label>Nickname
                 <span>Your Nickname</span></label>
                 <input type="text" name="nickname" value="{{ userinfo.nickname }}"/><br>
