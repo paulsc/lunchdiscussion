@@ -61,10 +61,6 @@ body {
 	font-size: 12px;
 }
 
-.separator {
-	color: #aaaaaa;
-}
-
 img {  
 	border-style: none;
 }
@@ -172,3 +168,24 @@ a:visited {
     margin-bottom: 15px;
 }
 
+#restaurants {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#restaurants li {
+    display: inline;
+    padding: 0;
+    margin: 0;
+}
+
+#restaurants li:before {
+    content: "\\";
+    color: #aaaaaa;
+}
+
+#restaurants li:first-child:before {
+    content: "";
+    color: #aaaaaa;
+}
