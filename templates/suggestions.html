@@ -1,77 +1,53 @@
+<div id="suggestions">
 	{% ifequal suggestions.count 0 %}
 
-	<div id="no_suggestions">No suggestions have been made yet. Click on a restaurant below to make one.</div>
+	<div id="none">No suggestions have been made yet. Click on a restaurant below to make one.</div>
 
 	{% else %}
 		{% for sug in suggestions %}
-			<div id="suggestion">
-		
-				<b>
-				{% if sug.restaurant.has_comments %}
-					<a href="javascript:showRestaurantPopup('{{ sug.restaurant.key }}')">{{ sug.restaurant.name }}</a>
-				{% else %}
-					{{ sug.restaurant.name }}
-				{% endif %}
-				</b>
-				<small>by {{ sug.author.nickname }}
-			
-				<a id="comment_button{{ forloop.counter }}" href="#"
-					onclick="$('comment_box{{ forloop.counter }}').show(); return false;">
-					<img class="comment" src="/images/comment.png"/>
-				</a>
-				{% ifequal sug.author.user currentuser.user %}
-				<a href="#" onclick="removeSuggestion('{{ sug.key }}')">
-					<img class="delete" src="/images/delete.png"/>
-				</a>
-				{% endifequal %}
-
-				</small>
-			    
+			<div class="suggestion">
+			    <div class="title">
+			        <div class="restaurant_name">
+    		        {% if sug.restaurant.has_comments %}
+    					<a href="javascript:showRestaurantPopup('{{ sug.restaurant.key }}')">{{ sug.restaurant.name }}</a>
+    				{% else %}
+    					{{ sug.restaurant.name }}
+    				{% endif %}
+    				</div>
+    				<div class="user_name">by {{ sug.author.nickname }} 
+    				    <a id="comment_button{{ forloop.counter }}" href="#"
+        					    onclick="$('comment_box{{ forloop.counter }}').show(); return false;">
+        					<img class="comment" src="/images/comment.png"/></a>
+        				{% ifequal sug.author.user currentuser.user %}
+        				<a href="#" onclick="removeSuggestion('{{ sug.key }}')">
+        					<img class="delete" src="/images/delete.png"/></a>
+        				{% endifequal %}
+    				</div>
+				</div>
+                
 			    <ul id="comments">
 				{% for comment in sug.ordered_comments %}
-				<li>
-					<img class="avatar32" src={% if member.avatar %} "/avatar?user={{ member.key }}" {% else %} "/images/avatar.png" {% endif %}/>
+				    <li>
+    					<img class="avatar32" src={% if member.avatar %} "/avatar?user={{ member.key }}" {% else %} "/images/avatar.png" {% endif %}/>
 					
-					<div class="comment">
-                        <div class="author">{{ comment.author.nickname }}</div>
-                        <div class="timesince">{{ comment.date|timesince }} ago</div>
-                        <div class="comment">{{ comment.text }}
-    					{% ifequal comment.author.user currentuser.user %}
-    					<a href="#" onclick="removeComment('{{ comment.key }}')">
-							<img class="delete" src="/images/delete.png"/>
-						</a>
-    					{% endifequal %}
-    					</div>
-    				</div>
-				</li>
-				
-				{% comment %}
-				<div class="comment">
-					<table><tr>
-							{% if comment.author.avatar %}
-								<td><img src="/avatar?user={{ comment.author.key }}" width="32"></td>
-							{% else %}
-								<td><img src="/images/avatar.png" width="32"></td>					
-							{% endif %}
-							<td>
-								<span class="comment_author">{{ comment.author.nickname }}</span> 
-								<span class="comment_timesince">{{ comment.date|timesince }} ago</span>
-								<div class="comment_text">{{ comment.text }}
-								{% ifequal comment.author.user currentuser.user %}
-									<a href="#" onclick="removeComment('{{ comment.key }}')">
-										<img src="/images/delete.png" alt="delete" width="12" height="12"/>
-									</a>
-								{% endifequal %}
-								</div>
-							</td>
-					</tr></table>
-				</div>
-				{% endcomment %}
+    					<div class="comment">
+                            <div>
+                                <div class="author">{{ comment.author.nickname }}</div>
+                                <div class="timesince">{{ comment.date|timesince }} ago</div>
+                            </div>
+                            <div class="comment">{{ comment.text }}
+        					{% ifequal comment.author.user currentuser.user %}
+        					<a href="#" onclick="removeComment('{{ comment.key }}')">
+    							<img class="delete" src="/images/delete.png"/>
+    						</a>
+        					{% endifequal %}
+        					</div>
+        				</div>
+    				</li>
 				{% endfor %}
 			    </ul>
 			    
-				<div class="comment_box" style="display: none"
-					id="comment_box{{ forloop.counter }}">
+				<div class="comment_box" style="display: none;" id="comment_box{{ forloop.counter }}">
 					<textarea cols="60" rows="6" id="comment_text{{ forloop.counter }}"></textarea>
 					<br/>
 					<input type="button" value="add comment" 
@@ -80,3 +56,4 @@
 			</div>
 		{% endfor %}
 	{% endifequal %}
+</div>

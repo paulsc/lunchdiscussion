@@ -2,28 +2,26 @@
 
 {% block content %}
 
-		<div id="main">
-            <ul id="main_menu">
-                {% block extramenu %}{% endblock %}	
-				{% if logout_url %}
-					<li><a href="{{ logout_url }}">logout</a></li>
-				{% endif %}
-            </ul>
-            
-			<div id="logo">
-				<a href="/" alt="home"><img src="/images/ld.png" alt="logo" width="280" /></a>
+<div id="main">
+    <ul id="menu">
+        {% block extramenu %}{% endblock %}	
+		{% if logout_url %}
+			<li><a href="{{ logout_url }}">logout</a></li>
+		{% endif %}
+    </ul>
+    
+	<a href="/"><img class="logo" src="/images/ld.png"/></a>
+
+	{% block notification %}
+		{% if notification %}
+			<div class="notification">
+				{{ notification }}
 			</div>
-		
-			{% block notification %}
-				{% if notification %}
-					<div class="notification">
-						{{ notification }}
-					</div>
-				{% endif %}
-			{% endblock %}
-		
-			{% block main %}{% endblock %}
-		
-		</div>
+		{% endif %}
+	{% endblock %}
+
+	{% block main %}{% endblock %}
+
+</div>
 
 {% endblock %}
