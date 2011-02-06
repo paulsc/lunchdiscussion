@@ -6,17 +6,19 @@ img {
 	border-style: none;
 }
 
+@link_color: #242133;
+
 a {
-	color: #242133;
+	color: @link_color;
 	text-decoration: none;
+}
+
+a:visited {
+	color: @link_color;
 }
 
 a:hover {
 	text-decoration: underline;
-}
-
-a:visited {
-	color: #242133;
 }
 
 #main {
@@ -49,18 +51,21 @@ img.logo {
 }
 		
 #suggestions {
+	
+	@border_color: #dddddd;
+	
 	#none {
 		text-align: center;
-		color: #aaaaaa;
+		color: silver;
 		padding: 30px;
-		border: 1px solid #dddddd;
+		border: 1px solid @border_color;
 	}
 	
 	.suggestion {
 		margin: 5px;
 		min-width: 400px;
 		padding: 5px;
-		border: 1px solid #dddddd;
+		border: 1px solid @border_color;
 		
 		.restaurant_name {
 			.onerow;
@@ -95,13 +100,13 @@ img.logo {
 		
 		.author {
 			.onerow;
-			color: #888888;
+			color: gray;
 			font-size: small;
 		}
 		
 		.timesince {
 			.onerow;
-			color: #888888;
+			color: gray;
 			font-size: x-small;
 		}
 		
@@ -130,7 +135,7 @@ img.logo {
 		
 		&:before {
 			content: " | ";
-	    	color: #aaaaaa;
+	    	color: silver;
 		}
 		
 		&:first-child:before {
@@ -182,7 +187,7 @@ img.logo {
 		
 		&:before {
 			content: "\\";
-	    	color: #aaaaaa;
+	    	color: silver;
 		}
 		
 		&:first-child:before {
@@ -190,4 +195,3 @@ img.logo {
 		}
 	}	
 }
-
