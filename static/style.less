@@ -1,10 +1,104 @@
+body {
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+#main {
+	max-width: 700px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+img {  
+	border-style: none;
+}
+
 img.avatar32 {
 	width: 32px;
 	height: 32px;
 }
 
-ul.menu {
-	list-style: :none;
+img.delete {
+	width: 14px;
+	height: 14px;
+}
+
+img.comment {
+	width: 16px;
+	height: 16px;
+}
+
+a {
+	color: #242133;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:visited {
+	color: #242133;
+}
+
+#no_suggestions {
+	text-align: center;
+	color: #aaaaaa;
+	padding: 30px;
+	border: 1px solid #dddddd;
+}
+
+#suggestion {
+	margin: 5px;
+	min-width: 400px;
+	padding: 5px;
+	border: 1px solid #dddddd;
+}
+
+.comment_box {
+	padding-left: 40px;
+}
+
+#comments {
+	list-style: none;
+	padding-left: 30;
+	
+	li {
+		display: list-item;
+		padding: 0;
+		margin-bottom: 10px;
+		
+		&:before {
+			content: "";
+		}
+		
+		img {
+			padding-right: 10px;
+			vertical-align: top;
+		}
+		
+		.author {
+			color: #888888;
+			font-size: small;
+		}
+		
+		.timesince {
+			color: #888888;
+			font-size: x-small;
+		}
+	
+		.comment {
+			font-size: medium;
+			margin-top: 5px;
+		}
+	}
+}
+
+.comment {
+	 display:inline-block;	
+}
+
+#main_menu {
+	list-style: none;
 	padding: 0;
 	text-align: right;
 	
@@ -21,13 +115,20 @@ ul.menu {
 		
 		&:first-child:before {
 		    content: "";
-		    color: #aaaaaa;
 		}
 	}
 }
 
-ul.hlist {
-	list-style: :none;
+#groupname {
+	font-size: large;
+}
+
+#users {
+	padding-top: 20px;
+}
+
+#userlist {
+	list-style: none;
 	padding: 0;
 	margin: 0;
 	
@@ -36,14 +137,6 @@ ul.hlist {
 		padding: 0;
 		margin: 0;
 		text-align: center;
-		
-		&:before {
-			color: #aaaaaa;
-		}
-		
-		&:first-child:before {
-		    color: #aaaaaa;
-		}
 		
 		.name {
 			font-size: small;
@@ -55,10 +148,25 @@ ul.hlist {
 	}
 }
 
-.inactive {
-	opacity: 0.3;
+ul.restaurants {
+	list-style: none;
+	padding: 0;
+	
+	li {
+		display: inline-block;
+		padding: 0;
+		
+		&:before {
+			content: "\\";
+	    	color: #aaaaaa;
+		}
+		
+		&:first-child:before {
+		    content: "";
+		}
+	}
 }
 
-#user {
-	
+.inactive {
+	opacity: 0.3;
 }

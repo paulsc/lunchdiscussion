@@ -23,44 +23,57 @@
 
 {% block main %}
 
-<ul class="hlist">
-{% for member in active_crew %}
-<li>
-    <a href={% ifnotequal member.user currentuser.user %} "javascript:showProfilePopup('{{ member.key }}')" {% else %} "/profile" {% endifnotequal %}>
-        <img class="avatar32" src={% if member.avatar %} "/avatar?user={{ member.key }}" {% else %} "/images/avatar.png" {% endif %}/>
-    </a>
-    <div class="name">{{ member.nickname }}</div>
-    <div class="karma">{{ member.karma|default:"0" }}</div>
-</li>
+<div id="groupname">{{ currentgroup.fullname }}</div>
 
-<li class="inactive">
-    <a href={% ifnotequal member.user currentuser.user %} "javascript:showProfilePopup('{{ member.key }}')" {% else %} "/profile" {% endifnotequal %}>
-        <img class="avatar32" src={% if member.avatar %} "/avatar?user={{ member.key }}" {% else %} "/images/avatar.png" {% endif %}/>
-    </a>
-    <div class="name">{{ member.nickname }}</div>
-    <div class="karma">{{ member.karma|default:"0" }}</div>
-</li>
+<div id="users">
+    <ul id="userlist">
+    {% for member in active_crew %}
+    <li>
+        <a href={% ifnotequal member.user currentuser.user %} "javascript:showProfilePopup('{{ member.key }}')" {% else %} "/profile" {% endifnotequal %}>
+            <img class="avatar32" src={% if member.avatar %} "/avatar?user={{ member.key }}" {% else %} "/images/avatar.png" {% endif %}/>
+        </a>
+        <div class="name">{{ member.nickname }}</div>
+        <div class="karma">{{ member.karma|default:"0" }}</div>
+    </li>
 
-<li>
-    <a href={% ifnotequal member.user currentuser.user %} "javascript:showProfilePopup('{{ member.key }}')" {% else %} "/profile" {% endifnotequal %}>
-        <img class="avatar32" src={% if member.avatar %} "/avatar?user={{ member.key }}" {% else %} "/images/avatar.png" {% endif %}/>
-    </a>
-    <div class="name">{{ member.nickname }}</div>
-    <div class="karma">{{ member.karma|default:"0" }}</div>
-</li>
+    <li class="inactive">
+        <a href={% ifnotequal member.user currentuser.user %} "javascript:showProfilePopup('{{ member.key }}')" {% else %} "/profile" {% endifnotequal %}>
+            <img class="avatar32" src={% if member.avatar %} "/avatar?user={{ member.key }}" {% else %} "/images/avatar.png" {% endif %}/>
+        </a>
+        <div class="name">{{ member.nickname }}</div>
+        <div class="karma">{{ member.karma|default:"0" }}</div>
+    </li>
 
-{% endfor %}
+    <li>
+        <a href={% ifnotequal member.user currentuser.user %} "javascript:showProfilePopup('{{ member.key }}')" {% else %} "/profile" {% endifnotequal %}>
+            <img class="avatar32" src={% if member.avatar %} "/avatar?user={{ member.key }}" {% else %} "/images/avatar.png" {% endif %}/>
+        </a>
+        <div class="name">{{ member.nickname }}</div>
+        <div class="karma">{{ member.karma|default:"0" }}</div>
+    </li>
 
-{% for member in dead_crew %}
-<li class="inactive">
-    <a href={% ifnotequal member.user currentuser.user %} "javascript:showProfilePopup('{{ member.key }}')" {% else %} "/profile" {% endifnotequal %}>
-        <img class="avatar32" src={% if member.avatar %} "/avatar?user={{ member.key }}" {% else %} "/images/avatar.png" {% endif %}/>
-    </a>
-    <div class="name">{{ member.nickname }}</div>
-    <div class="karma">{{ member.karma|default:"0" }}</div>
-</li>
-{% endfor %}
-</ul>
+    {% endfor %}
+
+    {% for member in dead_crew %}
+    <li class="inactive">
+        <a href={% ifnotequal member.user currentuser.user %} "javascript:showProfilePopup('{{ member.key }}')" {% else %} "/profile" {% endifnotequal %}>
+            <img class="avatar32" src={% if member.avatar %} "/avatar?user={{ member.key }}" {% else %} "/images/avatar.png" {% endif %}/>
+        </a>
+        <div class="name">{{ member.nickname }}</div>
+        <div class="karma">{{ member.karma|default:"0" }}</div>
+    </li>
+    {% endfor %}
+    </ul>
+
+</div>
+
+<div id="suggestions">
+    {% include "suggestions.html" %}
+</div>
+{% include "restaurants.html" %} 
+
+<input type="text" id="restaurant_name" />
+<input type="button" value="add" onclick="javascript:addRestaurant()" />
 
 {% endblock %}
 

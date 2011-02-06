@@ -1,10 +1,10 @@
 	{% ifequal suggestions.count 0 %}
 
-	<div class="no_suggestions">No suggestions have been made yet. Click on a restaurant below to make one</div>
+	<div id="no_suggestions">No suggestions have been made yet. Click on a restaurant below to make one.</div>
 
 	{% else %}
 		{% for sug in suggestions %}
-			<div class="suggestion">
+			<div id="suggestion">
 		
 				<b>
 				{% if sug.restaurant.has_comments %}
@@ -17,16 +17,35 @@
 			
 				<a id="comment_button{{ forloop.counter }}" href="#"
 					onclick="$('comment_box{{ forloop.counter }}').show(); return false;">
-					<img src="/images/comment.png" alt="comment" width="16" height="16" /></a>
+					<img class="comment" src="/images/comment.png"/>
+				</a>
 				{% ifequal sug.author.user currentuser.user %}
 				<a href="#" onclick="removeSuggestion('{{ sug.key }}')">
-					<img src="/images/delete.png" alt="delte" width="14" height="14"/>
+					<img class="delete" src="/images/delete.png"/>
 				</a>
 				{% endifequal %}
 
 				</small>
-			
+			    
+			    <ul id="comments">
 				{% for comment in sug.ordered_comments %}
+				<li>
+					<img class="avatar32" src={% if member.avatar %} "/avatar?user={{ member.key }}" {% else %} "/images/avatar.png" {% endif %}/>
+					
+					<div class="comment">
+                        <div class="author">{{ comment.author.nickname }}</div>
+                        <div class="timesince">{{ comment.date|timesince }} ago</div>
+                        <div class="comment">{{ comment.text }}
+    					{% ifequal comment.author.user currentuser.user %}
+    					<a href="#" onclick="removeComment('{{ comment.key }}')">
+							<img class="delete" src="/images/delete.png"/>
+						</a>
+    					{% endifequal %}
+    					</div>
+    				</div>
+				</li>
+				
+				{% comment %}
 				<div class="comment">
 					<table><tr>
 							{% if comment.author.avatar %}
@@ -47,8 +66,10 @@
 							</td>
 					</tr></table>
 				</div>
+				{% endcomment %}
 				{% endfor %}
-			
+			    </ul>
+			    
 				<div class="comment_box" style="display: none"
 					id="comment_box{{ forloop.counter }}">
 					<textarea cols="60" rows="6" id="comment_text{{ forloop.counter }}"></textarea>
