@@ -4,15 +4,15 @@
 
 		<div id="main">
 		
-			<div class="login">
-				<small>
-					{% block extramenu %}{% endblock %}	
-					{% if logout_url %}
-						<a href="{{ logout_url }}">logout</a>
-					{% endif %}
-				</small>
-			</div>
+			
 
+            <ul class="menu">
+                {% block extramenu %}{% endblock %}	
+				{% if logout_url %}
+					<li><a href="{{ logout_url }}">logout</a></li>
+				{% endif %}
+            </ul>
+            
 			<div id="logo">
 				<a href="/" alt="home"><img src="/images/ld.png" alt="logo" width="280" /></a>
 			</div>

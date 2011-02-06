@@ -1,16 +1,86 @@
 {% extends "header.html" %}
 
 {% block extrahead %}
-		<script type="text/javascript" src="/static/index.js"></script>
+    <script type="text/javascript" src="/static/index.js"></script>
 
-		{% if ask_to_rate %}
-			<script type="text/javascript">
-				Event.observe(window, "load", function() {
-					showRatingPopup();
-				});
-			</script>
-		{% endif %}
-		
+    {% if ask_to_rate %}
+        <script type="text/javascript">
+            Event.observe(window, "load", function() {
+                showRatingPopup();
+            });
+        </script>
+    {% endif %}   
+{% endblock %}
+
+{% block extramenu %}
+<li><a href="/{{ currentgroup.shortname }}/invite">invite</a></li>
+<li><a href="/{{ currentgroup.shortname }}/stats">stats</a></li>
+<li><a href="/profile">my profile</a></li>
+{% if admin %}
+<li><a href="/{{currentgroup.shortname}}/admin">admin</a></li>
+{% endif %}      
+{% endblock %}
+
+{% block main %}
+
+<ul class="hlist">
+{% for member in active_crew %}
+<li>
+    <a href={% ifnotequal member.user currentuser.user %} "javascript:showProfilePopup('{{ member.key }}')" {% else %} "/profile" {% endifnotequal %}>
+        <img class="avatar32" src={% if member.avatar %} "/avatar?user={{ member.key }}" {% else %} "/images/avatar.png" {% endif %}/>
+    </a>
+    <div class="name">{{ member.nickname }}</div>
+    <div class="karma">{{ member.karma|default:"0" }}</div>
+</li>
+
+<li class="inactive">
+    <a href={% ifnotequal member.user currentuser.user %} "javascript:showProfilePopup('{{ member.key }}')" {% else %} "/profile" {% endifnotequal %}>
+        <img class="avatar32" src={% if member.avatar %} "/avatar?user={{ member.key }}" {% else %} "/images/avatar.png" {% endif %}/>
+    </a>
+    <div class="name">{{ member.nickname }}</div>
+    <div class="karma">{{ member.karma|default:"0" }}</div>
+</li>
+
+<li>
+    <a href={% ifnotequal member.user currentuser.user %} "javascript:showProfilePopup('{{ member.key }}')" {% else %} "/profile" {% endifnotequal %}>
+        <img class="avatar32" src={% if member.avatar %} "/avatar?user={{ member.key }}" {% else %} "/images/avatar.png" {% endif %}/>
+    </a>
+    <div class="name">{{ member.nickname }}</div>
+    <div class="karma">{{ member.karma|default:"0" }}</div>
+</li>
+
+{% endfor %}
+
+{% for member in dead_crew %}
+<li class="inactive">
+    <a href={% ifnotequal member.user currentuser.user %} "javascript:showProfilePopup('{{ member.key }}')" {% else %} "/profile" {% endifnotequal %}>
+        <img class="avatar32" src={% if member.avatar %} "/avatar?user={{ member.key }}" {% else %} "/images/avatar.png" {% endif %}/>
+    </a>
+    <div class="name">{{ member.nickname }}</div>
+    <div class="karma">{{ member.karma|default:"0" }}</div>
+</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
+
+<!-- *** END *** -->
+
+{% comment %}
+
+{% extends "header.html" %}
+
+{% block extrahead %}
+        <script type="text/javascript" src="/static/index.js"></script>
+
+        {% if ask_to_rate %}
+            <script type="text/javascript">
+                Event.observe(window, "load", function() {
+                    showRatingPopup();
+                });
+            </script>
+        {% endif %}
+        
 {% endblock %}
 
 {% block extramenu %}
@@ -21,63 +91,65 @@
 {% if admin %}
 <a href="/{{currentgroup.shortname}}/admin">admin</a> | 
 {% endif %}
-					
+                    
 {% endblock %}
 
 {% block main %}
 
-		<div id="groupname">{{ currentgroup.fullname }}</div>
+        <div id="groupname">{{ currentgroup.fullname }}</div>
 
-		<div id="discussrs">
-			<table style="text-align: center"><tr>
-					{% for member in active_crew %}
-					<td>
-						{% ifnotequal member.user currentuser.user %}
-							<a href="javascript:showProfilePopup('{{ member.key }}')">
-						{% else %}
-							<a href="/profile">
-						{% endifnotequal %}
-						{% if member.avatar %}
-							<img src="/avatar?user={{ member.key }}" alt="avatar" height="32"/>
-						{% else %}
-							<img src="/images/avatar.png" alt="avatar" height="32"/>
-						{% endif %}
-						</a>
-						<br/>
-						<small>{{ member.nickname }}</small><br/><span class="karma">{{ member.karma|default:"0" }}</span>
-						</td>
-					{% endfor %}
-					{% for member in dead_crew %}
-					<td style="opacity: 0.3">
-						{% ifnotequal member.user currentuser.user %}
-							<a href="javascript:showProfilePopup('{{ member.key }}')">
-						{% else %}
-							<a href="/profile">
-						{% endifnotequal %}
-						{% if member.avatar %}
-							<img src="/avatar?user={{ member.key }}" alt="avatar" height="32"/>{% else %}
-							<img src="/images/avatar.png" alt="avatar" height="32"/>{% endif %}</a>
-						<br/>
-						<small>{{ member.nickname }}</small>
-						</td>
-					{% endfor %}					
-			</tr></table>	
-		</div>
-	
-		<div id="discussion" class="clear"/> 
-			
-			<div id="suggestions">
-				{% include "suggestions.html" %}	
-			</div> <br/>
-	
-			<span id="restaurants">
-				{% include "restaurants.html" %}	
-			</span>
-			
-			<input type="text" id="restaurant_name" />
-			<input type="button" value="add" onclick="javascript:addRestaurant()" />
-	
-		</div>
+        <div id="discussrs">
+            <table style="text-align: center"><tr>
+                    {% for member in active_crew %}
+                    <td>
+                        {% ifnotequal member.user currentuser.user %}
+                            <a href="javascript:showProfilePopup('{{ member.key }}')">
+                        {% else %}
+                            <a href="/profile">
+                        {% endifnotequal %}
+                        {% if member.avatar %}
+                            <img src="/avatar?user={{ member.key }}" alt="avatar" height="32"/>
+                        {% else %}
+                            <img src="/images/avatar.png" alt="avatar" height="32"/>
+                        {% endif %}
+                        </a>
+                        <br/>
+                        <small>{{ member.nickname }}</small><br/><span class="karma">{{ member.karma|default:"0" }}</span>
+                        </td>
+                    {% endfor %}
+                    {% for member in dead_crew %}
+                    <td style="opacity: 0.3">
+                        {% ifnotequal member.user currentuser.user %}
+                            <a href="javascript:showProfilePopup('{{ member.key }}')">
+                        {% else %}
+                            <a href="/profile">
+                        {% endifnotequal %}
+                        {% if member.avatar %}
+                            <img src="/avatar?user={{ member.key }}" alt="avatar" height="32"/>{% else %}
+                            <img src="/images/avatar.png" alt="avatar" height="32"/>{% endif %}</a>
+                        <br/>
+                        <small>{{ member.nickname }}</small>
+                        </td>
+                    {% endfor %}                    
+            </tr></table>    
+        </div>
+    
+        <div id="discussion" class="clear"/> 
+            
+            <div id="suggestions">
+                {% include "suggestions.html" %}    
+            </div> <br/>
+    
+            <span id="restaurants">
+                {% include "restaurants.html" %}    
+            </span>
+            
+            <input type="text" id="restaurant_name" />
+            <input type="button" value="add" onclick="javascript:addRestaurant()" />
+    
+        </div>
 
 
 {% endblock %}
+
+{% endcomment %}

@@ -1,0 +1,64 @@
+img.avatar32 {
+	width: 32px;
+	height: 32px;
+}
+
+ul.menu {
+	list-style: :none;
+	padding: 0;
+	text-align: right;
+	
+	li {
+		display: inline-block;
+		padding: 0;
+		
+		font-size: small;
+		
+		&:before {
+			content: " | ";
+	    	color: #aaaaaa;
+		}
+		
+		&:first-child:before {
+		    content: "";
+		    color: #aaaaaa;
+		}
+	}
+}
+
+ul.hlist {
+	list-style: :none;
+	padding: 0;
+	margin: 0;
+	
+	li {
+		display: inline-block;
+		padding: 0;
+		margin: 0;
+		text-align: center;
+		
+		&:before {
+			color: #aaaaaa;
+		}
+		
+		&:first-child:before {
+		    color: #aaaaaa;
+		}
+		
+		.name {
+			font-size: small;
+		}
+		
+		.karma {
+			font-size: x-small;
+		}
+	}
+}
+
+.inactive {
+	opacity: 0.3;
+}
+
+#user {
+	
+}
