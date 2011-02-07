@@ -173,11 +173,12 @@ class AvatarHandler(LDContextHandler):
 		else:
 			userinfo = db.get(userkey)
 
+		self.response.headers['Content-Type'] = "image/png"
+
 		if userinfo.avatar:
-			self.response.headers['Content-Type'] = "image/png"
 			self.response.out.write(userinfo.avatar)
 		else:
-			self.error(404)
+			self.redirect("/images/avatar.png")
 
 class RatingHandler(LDContextHandler):	
 	def add_rating(self, date, restaurant, author, rating):

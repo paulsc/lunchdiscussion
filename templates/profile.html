@@ -2,32 +2,25 @@
 
 {% block content %}
 
-		<center>
-			<h2>{{ userinfo.nickname }}</h2>
+<center>
+	<h2>{{ userinfo.nickname }}</h2>
 
-			{% if not userinfo %}
-				<small>fill in your profile to get started</small>
-				<br/>
-				<br/>
-				{% else %}
-					{% if userinfo.avatar %}
-						<img src="/avatar?user={{ userinfo.key }}" alt="avatar">
-					{% else %}
-						<img src="/images/avatar.png" alt="avatar">
-					{% endif %}
-						<br/>
-						<br/>
-			{% endif %}
+	{% if not userinfo %}
+		<small>fill in your profile to get started</small>
+	{% else %}
+		<img src="/avatar?user={{ userinfo.key }}" alt="avatar">
+	{% endif %}
+    <br/>
+	<br/>
 	
-				<table>
-					<tr>
-						<td align="right">last posted:
-						<td>{% firstof userinfo.lastposted "never" %}
-					<tr>
-						<td align="right">karma:
-						<td>{% firstof userinfo.karma "0" %}
-				</table>
-
-		</center>
+	<table>
+		<tr>
+			<td align="right">last posted:
+			<td>{% firstof userinfo.lastposted "never" %}
+		<tr>
+			<td align="right">karma:
+			<td>{% firstof userinfo.karma "0" %}
+	</table>
+</center>
 
 {% endblock %}

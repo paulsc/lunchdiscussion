@@ -23,11 +23,7 @@
         <input type="checkbox" name="userId" value="{{member.key}}"/>
         <label>
             <a href="javascript:showProfilePopup('{{member.key}}')">
-                {% if member.avatar %}
-                    <img src="/avatar?user={{member.key}}" alt="avatar" id="avatar"/>
-        		{% else %}
-                    <img src="/images/avatar.png" alt="avatar" id="avatar"/>
-        		{% endif %}
+                <img id="avatar" src="/avatar?user={{member.key}}" alt="avatar"/>
                 {{member.nickname}}
             </a>
         </label>

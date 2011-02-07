@@ -8,19 +8,17 @@
 
 		{% for comment in comments %}
 		<div class="comment">
-			<table><tr>
-					{% if comment.author.avatar %}
-						<td><img src="/avatar?user={{ comment.author.key }}" width="32"></td>
-					{% else %}
-						<td><img src="/images/avatar.png" width="32"></td>					
-					{% endif %}
+			<table>
+			    <tr>
+					<td><img class="avatar32" src="/avatar?user={{ comment.author.key }}"></td>
 					<td>
 						<span class="comment_author">{{ comment.author.nickname }}</span>
 						<span class="comment_rating">{{ comment.pretty_rating }}</span>
 						<span class="comment_timesince">{{ comment.date|timesince }} ago</span>
 						<div class="comment_text">{{ comment.text }}</div>
 					</td>
-			</tr></table>
+			    </tr>
+			</table>
 		</div>
 		{% endfor %}			
 
