@@ -80,9 +80,13 @@ img.logo {
 	}
 }
 
-#comments {
+.hlist(@padding: 0px) {
 	list-style: none;
-	padding-left: 30;
+	padding-left: @padding;
+}
+
+#comments {
+	.hlist(30px);
 	
 	li {
 		display: list-item;
@@ -123,8 +127,7 @@ img.logo {
 }
 
 #menu {
-	list-style: none;
-	padding: 0;
+	.hlist;
 	text-align: right;
 	
 	li {
@@ -153,8 +156,7 @@ img.logo {
 }
 
 #userlist {
-	list-style: none;
-	padding: 0;
+	.hlist;
 	margin: 0;
 	
 	li {
@@ -178,8 +180,7 @@ img.logo {
 }
 
 #restaurants {
-	list-style: none;
-	padding: 0;
+	.hlist;
 	
 	li {
 		display: inline-block;
