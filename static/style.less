@@ -32,6 +32,11 @@ img.avatar32 {
 	height: 32px;
 }
 
+img.avatar64 {
+	width: 64px;
+	height: 64px;
+}
+
 img.delete {
 	width: 14px;
 	height: 14px;
@@ -179,6 +184,68 @@ img.logo {
 	}
 }
 
+#profileLayout {
+	font-family: "Lucida Grande", "Lucida Sans Unicode", 
+        Verdana, Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    
+    width:512px;
+    margin-left: auto;
+    margin-right: auto;
+    
+    h1 {
+		font-size: 16px;
+	}
+	
+	h2 {
+	    font-size: 11px;
+	    font-weight: normal;
+	    font-style: normal;
+	    color:#666666;
+	    border-bottom:solid 1px #a1a1a1;
+	    padding-bottom:10px;
+	}
+	
+	br {
+	    clear: left;
+	}
+	
+	#formLayout {
+		label, input {
+			display: block;
+		    float: left;
+		    margin-bottom: 10px;
+		}
+		
+		label, span {
+			width: 180px;
+    		text-align: right;
+    		padding-right: 10px;
+		}
+		
+		input {
+			width: auto;
+		}
+		
+		label {
+			font-size: 12px;
+		}
+		
+		span {
+			color:#666666;
+    		display:block;
+    		font-size:11px;
+    		text-align:right;
+		}
+		
+		#avatar {
+			border: solid 2px #a1a1a1;
+    		padding: 5px;
+    		margin-bottom: 15px;
+		}
+	}
+}
+
 #restaurants {
 	.hlist;
 	
@@ -194,5 +261,5 @@ img.logo {
 		&:first-child:before {
 		    content: "";
 		}
-	}	
+	}
 }

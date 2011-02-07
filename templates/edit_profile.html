@@ -1,63 +1,59 @@
 {% extends "header.html" %}
 
 {% block main %}
-    <div class="profileLayout">
-        <div class="formLayout">
-            <h1>My Profile</h1>
-            <h2>Your <a href="/">lunchdiscussion.com</a> Profile</h2>
-            <form action="/profile" enctype="multipart/form-data" method="post">
-    			
-    			{% if not userinfo.lastposted %}
-            	    <input type="hidden" name="first_login" value="true" />
-    		    {% endif %}
-    		    
-    			<label>&nbsp;</label>
-        		{% if userinfo and userinfo.avatar %}
-        		    <img id="avatar" src="/avatar" alt="avatar">
-        		{% else %}
-        		    <img id="avatar" src="/images/avatar.png" alt="avatar">
-        		{% endif %}
-            	<br>
-    		    
-    		    {% if user.email %}
-                    <label>Account
-                    <span>Your Account</span></label>
-                    {{ user.email }}<br>
-                {% endif %}
-                
-                <label>Nickname
-                <span>Your Nickname</span></label>
-                <input type="text" name="nickname" value="{{ userinfo.nickname }}"/><br>
-            
-                <label>Notifications
-                <span>Your Email for Notifications</span></label>
-                <input type="text" name="email" value="{{ userinfo.email }}"/><br>
-            
-                <label>Avatar
-                <span>Choose your Avatar</span></label>
-                <input type="file" name="avatar"/><br>
-            
-                {% if userinfo %}
-    			    <label>Karma
-    			    <span>Your Karma</span>
-    			    </label>{% firstof userinfo.karma "0" %}<br>
-    			{% endif %}
+<div id="profileLayout">
+    <div id="formLayout">
+        <h1>My Profile</h1>
+        <h2>Your <a href="/">lunchdiscussion.com</a> Profile</h2>
+        <form action="/profile" enctype="multipart/form-data" method="post">
 			
-    			<label>&nbsp;</label>
-    			<input type="submit" value="Update"/><br>
-            </form>
-        </div>
-        {% if userinfo.lastposted %}
-        <br>
-        <div>
-            <h1>My Groups</h1>
-            <h2>Your lunch Groups</h2>
-            <ul>
-            {% for group in userinfo.grouprefs %}
-                <li><a href="/{{ group.groupname }}">{{ group.groupname }}</a>
-            {% endfor %}
-            </ul>
-        </div>
+			{% if not userinfo.lastposted %}
+        	    <input type="hidden" name="first_login" value="true" />
+		    {% endif %}
+		    
+			<label>&nbsp;</label>
+    		<img class="avatar64" id="avatar" src={% if userinfo and userinfo.avatar %}"/avatar"{% else %}"/images/avatar.png"{% endif %}/>
+        	<br>
+		    
+		    {% if user.email %}
+                <label>Account
+                <span>Your Account</span></label>
+                {{ user.email }}<br>
+            {% endif %}
+            
+            <label>Nickname
+            <span>Your Nickname</span></label>
+            <input type="text" name="nickname" value="{{ userinfo.nickname }}"/><br>
+        
+            <label>Notifications
+            <span>Your Email for Notifications</span></label>
+            <input type="text" name="email" value="{{ userinfo.email }}"/><br>
+        
+            <label>Avatar
+            <span>Choose your Avatar</span></label>
+            <input type="file" name="avatar"/><br>
+        
+            {% if userinfo %}
+			    <label>Karma
+			    <span>Your Karma</span>
+			    </label>{% firstof userinfo.karma "0" %}<br>
+			{% endif %}
+		
+			<label>&nbsp;</label>
+			<input type="submit" value="Update"/><br>
+        </form>
     </div>
-    {% endif %}
+    {% if userinfo.lastposted %}
+    <br>
+    <div>
+        <h1>My Groups</h1>
+        <h2>Your lunch Groups</h2>
+        <ul>
+        {% for group in userinfo.grouprefs %}
+            <li><a href="/{{ group.groupname }}">{{ group.groupname }}</a>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
