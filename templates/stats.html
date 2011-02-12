@@ -1,60 +1,65 @@
 {% extends "header.html" %}
 
 {% block main %}
-
-		<table cellspacing="50"><tr><td>
-	
-			<h3>best restaurant</h3>
-			<table style="border: 1px solid lightgray">
-			{% for restaurant in karma_ranking %}
-				{% if restaurant.karma %}				
-					<tr><td><small>{{ forloop.counter }}.</small>
-						<td>{{ restaurant.name }}
-						<td><small>{{ restaurant.karma }}</small>
-				{% endif %}
-			{% endfor %}
-			</table>
-			
-		<td>	
-			
-			<h3>most eaten at</h3>
-			<table style="border:1px solid lightgray">
-			{% for restaurant in lunchcount_ranking %}
-				{% if restaurant.lunchcount %}
-					<tr><td><small>{{ forloop.counter }}.</small>
-						<td>{{ restaurant.name }}
-						<td><small>{{ restaurant.lunchcount }}</small>
-				{% endif %}
-			{% endfor %}
-			</table>
-
-		<td>	
-			
-			<h3>best picker</h3>
-			<table style="border:1px solid lightgray">
-			{% for user in best_user %}
-				{% if user.karma %}
-					<tr><td><small>{{ forloop.counter }}.</small>
-						<td>{{ user.nickname }}
-						<td><small>{{ user.karma }}</small>
-				{% endif %}
-			{% endfor %}
-			</table>
-
-
-		<td>	
-			
-			<h3>fattest user</h3>
-			<table style="border:1px solid lightgray">
-			{% for user in biggest_eater %}
-				{% if user.lunchcount %}
-					<tr><td><small>{{ forloop.counter }}.</small>
-						<td>{{ user.nickname }}
-						<td><small>{{ user.lunchcount }}</small>
-				{% endif %}
-			{% endfor %}
-			</table>
-			
-		</table>
+<table cellspacing="50">
+    <tr>
+        <td>
+            <h3>best restaurant</h3>
+            <table style="border: 1px solid lightgray">
+            {% for restaurant in karma_ranking %}
+                {% if restaurant.karma %}
+                    <tr>
+                        <td><small>{{ forloop.counter }}.</small></td>
+                        <td>{{ restaurant.name }}</td>
+                        <td><small>{{ restaurant.karma }}</small></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </table>
+        </td>
+        <td>
+            <h3>most eaten at</h3>
+            <table style="border:1px solid lightgray">
+            {% for restaurant in lunchcount_ranking %}
+                {% if restaurant.lunchcount %}
+                    <tr>
+                        <td><small>{{ forloop.counter }}.</small></td>
+                        <td>{{ restaurant.name }}</td>
+                        <td><small>{{ restaurant.lunchcount }}</small></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </table>
+        </td>
+        <td>
+            <h3>best picker</h3>
+            <table style="border:1px solid lightgray">
+            {% for user in best_user %}
+                {% if user.karma %}
+                    <tr>
+                        <td><small>{{ forloop.counter }}.</small></td>
+                        <td>{{ user.nickname }}</td>
+                        <td><small>{{ user.karma }}</small></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </table>
+        </td>
+        <td>
+            <h3>fattest user</h3>
+            <table style="border:1px solid lightgray">
+            {% for user in biggest_eater %}
+                {% if user.lunchcount %}
+                    <tr>
+                        <td><small>{{ forloop.counter }}.</small></td>
+                        <td>{{ user.nickname }}</td>
+                        <td><small>{{ user.lunchcount }}</small></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+            </table>
+        </td>
+    </tr>
+</table>
 
 {% endblock %}

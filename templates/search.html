@@ -2,10 +2,10 @@
 
 {% block content %}
 
-		<h2>search</h2>
+<h2>search</h2>
 
-		{% for group in groups %}
-			<br/><a href="/search?group={{ group.key }}">{{ group.name }}</a>
-		{% endfor %}			
+{% for group in groups %}
+	<br/><a href="/search?group={{ group.key }}">{{ group.name }}</a>
+{% endfor %}
 
 {% endblock %}

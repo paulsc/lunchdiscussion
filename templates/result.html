@@ -2,15 +2,15 @@
 
 {% block content %}
 
-		<h2>search results for {{ group.name }}</h2>
-		<h3>target loc: {{ group.address }}</h3>
+<h2>search results for {{ group.name }}</h2>
+<h3>target loc: {{ group.address }}</h3>
 
-		{% for business in results.businesses %}
-		
-			<br/><br/>
-			<a href="{{ business.url }}">{{ business.name }}</a> {{ business.avg_rating }}
-			<br/>{{ business.address1 }} {{ business.address2 }} {{ business.address3 }}
-		
-		{% endfor %}
+{% for business in results.businesses %}
+
+	<br/><br/>
+	<a href="{{ business.url }}">{{ business.name }}</a> {{ business.avg_rating }}
+	<br/>{{ business.address1 }} {{ business.address2 }} {{ business.address3 }}
+
+{% endfor %}
 
 {% endblock %}
