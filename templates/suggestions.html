@@ -28,7 +28,7 @@
 			    <ul id="comments">
 				{% for comment in sug.ordered_comments %}
 				    <li>
-    					<img class="avatar32" src="/avatar?user={{ member.key }}"/>
+    					<img class="avatar32" src="/avatar?user={{ comment.author.key }}"/>
     					<div class="comment">
                             <div>
                                 <div class="author">{{ comment.author.nickname }}</div>
