@@ -79,7 +79,7 @@ def is_empty(str):
 
 def is_morning():
 	now = datetime.now(Eastern)
-	return now.hour < 14
+	return now.hour < 17
 	
 def can_vote(userinfo, group):
 	def can_vote_for_day(day):
